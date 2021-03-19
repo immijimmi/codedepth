@@ -8,13 +8,14 @@ class Scorer:
         self._dir_path = path.abspath(dir_path)
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
         self._filters = set(filters)
+        self.sorters = [*sorters]  # This can be public, because changes after instantiation will not affect the data
+
+        self._import_parsers = [PyImportParser]
         if use_parser_filters:
             for parser in self._import_parsers:
                 for func in parser.FILTERS:
                     self._filters.add(func)
-        self.sorters = [*sorters]  # This can be public, because changes after instantiation will not affect the data
 
-        self._import_parsers = [PyImportParser]
         self._scores = {}
         self._connections = {}
 
