@@ -90,10 +90,10 @@ class Scorer:
         if file_path in self._scores:
             return self._scores[file_path]
 
-        valid_parsers = list(filter(lambda parser: parser.can_parse(file_path), self._import_parsers))
+        valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._import_parsers))
         if not valid_parsers:
             raise ValueError("unable to parse provided file")
-        valid_parser = valid_parsers[0]
+        parser = valid_parsers[0]
 
         try:
             with open(file_path) as file:
@@ -101,7 +101,7 @@ class Scorer:
         except FileNotFoundError:  # Primarily used to weed out builtins
             raise ValueError("the file must be located in the specified directory")
 
-        dependencies_paths = valid_parser.get_dependencies_paths(contents, path.dirname(file_path))
+        dependencies_paths = parser.get_dependencies_paths(contents, path.dirname(file_path))
 
         score = 0
         for dependency_path in dependencies_paths:
