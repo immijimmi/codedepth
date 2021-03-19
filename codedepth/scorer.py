@@ -75,7 +75,7 @@ class Scorer:
             for name in files:
                 file_path = path.join(_path, name)
                 try:
-                    self.get_score(file_path)
+                    self.generate_score(file_path)
                 except ValueError:
                     pass
 
@@ -108,7 +108,7 @@ class Scorer:
             do_increment_score = self.is_valid_file(dependency_path)  # Filtered files do not increment score
 
             try:
-                dependency_score = self.get_score(dependency_path)
+                dependency_score = self.generate_score(dependency_path)
                 score = max(score, dependency_score+do_increment_score)
 
                 self._connections[file_path] = self._connections.get(file_path, []) + [dependency_path]
