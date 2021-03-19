@@ -104,6 +104,8 @@ class Scorer:
         dependencies_paths = parser.get_dependencies_paths(contents, path.dirname(file_path))
 
         score = 0
+        self._connections[file_path] = []
+
         for dependency_path in dependencies_paths:
             do_increment_score = self.is_valid_file(dependency_path)  # Filtered files do not increment score
 
@@ -111,7 +113,7 @@ class Scorer:
                 dependency_score = self.generate_score(dependency_path)
                 score = max(score, dependency_score+do_increment_score)
 
-                self._connections[file_path] = self._connections.get(file_path, []) + [dependency_path]
+                self._connections[file_path].append(dependency_path)
             except ValueError:
                 pass
 
