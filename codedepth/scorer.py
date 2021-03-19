@@ -10,7 +10,7 @@ class Scorer:
         self._filters = set(filters)
         self.sorters = [*sorters]  # This can be public, because changes after instantiation will not affect the data
 
-        self._import_parsers = [PyImportParser]
+        self._import_parsers = (PyImportParser,)
         if use_parser_filters:
             for parser in self._import_parsers:
                 for func in parser.FILTERS:
@@ -49,6 +49,7 @@ class Scorer:
 
         changes_made = True
         while changes_made:
+            result = {}
             changes_made = False
 
             for parent, children in working_result.items():
@@ -63,6 +64,9 @@ class Scorer:
 
                             for nested_child in self._connections[child]:
                                 updated_children.add(nested_child)
+
+                    result[parent] = updated_children
+
                 else:
                     changes_made = True  # Entry was filtered out of the result via omission
 
@@ -104,7 +108,7 @@ class Scorer:
         dependencies_paths = parser.get_dependencies_paths(contents, path.dirname(file_path))
 
         score = 0
-        self._connections[file_path] = []
+        self._connections[file_path] = set()
 
         for dependency_path in dependencies_paths:
             do_increment_score = self.is_valid_file(dependency_path)  # Filtered files do not increment score
@@ -113,7 +117,7 @@ class Scorer:
                 dependency_score = self.generate_score(dependency_path)
                 score = max(score, dependency_score+do_increment_score)
 
-                self._connections[file_path].append(dependency_path)
+                self._connections[file_path].add(dependency_path)
             except ValueError:
                 pass
 
