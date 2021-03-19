@@ -44,8 +44,30 @@ class Scorer:
     @property
     def connections(self):
         result = {}
+        working_result = self._connections
 
-        for
+        changes_made = True
+        while changes_made:
+            changes_made = False
+
+            for parent, children in working_result.items():
+                if self.is_valid_file(parent):
+                    updated_children = set()
+
+                    for child in children:
+                        if self.is_valid_file(child):
+                            updated_children.add(child)
+                        else:
+                            changes_made = True
+
+                            for nested_child in self._connections[child]:
+                                updated_children.add(nested_child)
+                else:
+                    changes_made = True  # Entry was filtered out of the result via omission
+
+            working_result = {**result}
+
+        return result
 
     def get_all(self):
         for _path, subdirs, files in walk(self._dir_path):
@@ -82,9 +104,7 @@ class Scorer:
 
         score = 0
         for dependency_path in dependencies_paths:
-            do_increment_score = (
-                all(func(dependency_path) for func in self._filters)  # Filtered files do not increment score
-            )
+            do_increment_score = self.is_valid_file(dependency_path)  # Filtered files do not increment score
 
             try:
                 dependency_score = self.get_score(dependency_path)
@@ -96,3 +116,6 @@ class Scorer:
 
         self._scores[file_path] = score
         return score
+
+    def is_valid_file(self, file_path):
+        return all(func(file_path) for func in self._filters)
