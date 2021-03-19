@@ -70,7 +70,7 @@ class Scorer:
 
         return result
 
-    def get_scores(self):
+    def generate_scores(self):
         for _path, subdirs, files in walk(self._dir_path):
             for name in files:
                 file_path = path.join(_path, name)
@@ -81,7 +81,7 @@ class Scorer:
 
         return self.scores
 
-    def get_score(self, file_path):
+    def generate_score(self, file_path):
         file_path = path.abspath(file_path)
 
         # Preliminary checks
