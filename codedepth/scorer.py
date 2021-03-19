@@ -70,7 +70,7 @@ class Scorer:
 
         return result
 
-    def get_all(self):
+    def get_scores(self):
         for _path, subdirs, files in walk(self._dir_path):
             for name in files:
                 file_path = path.join(_path, name)
