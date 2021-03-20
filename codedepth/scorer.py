@@ -1,4 +1,6 @@
 from os import path, walk
+from networkx import DiGraph, draw_shell as draw
+from matplotlib import pyplot
 
 from .parsers import PyImportParser
 
@@ -54,18 +56,18 @@ class Scorer:
 
             for parent, children in working_result.items():
                 if self.is_valid_file(parent):
-                    updated_children = set()
+                    filtered_children = set()
 
                     for child in children:
                         if self.is_valid_file(child):
-                            updated_children.add(child)
+                            filtered_children.add(child)
                         else:
                             changes_made = True
 
                             for nested_child in self._connections[child]:
-                                updated_children.add(nested_child)
+                                filtered_children.add(nested_child)
 
-                    result[parent] = updated_children
+                    result[parent] = filtered_children
 
                 else:
                     changes_made = True  # Entry was filtered out of the result via omission
@@ -126,3 +128,38 @@ class Scorer:
 
     def is_valid_file(self, file_path):
         return all(func(file_path) for func in self._filters)
+
+    def plot_digraph(self, node_size=12500, alpha=0.35):
+        """
+        Basic grapher to display generated scores/connections. Not guaranteed to produce aesthetic graphs when
+        provided with more complex dependency networks
+        """
+
+        connections = {}
+
+        # Prettify data labels
+        for parent, children in self.connections.items():
+            abbreviated_children = set()
+
+            for child in children:
+                abbreviated_children.add(self.get_label(child))
+
+            connections[self.get_label(parent)] = abbreviated_children
+
+        graph = DiGraph(connections).reverse()
+        draw(graph, with_labels=True, node_size=node_size, alpha=alpha, arrows=True)
+        pyplot.show()
+
+    def get_label(self, file_path):
+        """
+        Provides a concrete implementation for prettifying a file path into a label
+        """
+
+        result = file_path.replace(self._dir_path+"\\", "")
+        result = result.replace("\\", " ▼\n")
+
+        score = self._scores[file_path]
+        max_score = max(*self._scores.values())
+        result += "\n\n" + f"({'★' * score}{'☆' * (max_score - score)})"
+
+        return result
