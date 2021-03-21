@@ -5,6 +5,14 @@ from matplotlib import pyplot
 from .parsers import PyImportParser
 
 
+class ExternalFileError(FileNotFoundError):
+    pass
+
+
+class NoValidParserError(NotImplementedError):
+    pass
+
+
 class Scorer:
     def __init__(self, dir_path, filters=(), sorters=(), use_parser_filters=True):
         self._dir_path = path.abspath(dir_path)
@@ -82,7 +90,9 @@ class Scorer:
                 file_path = path.join(_path, name)
                 try:
                     self.generate_score(file_path)
-                except ValueError:
+                except ExternalFileError:
+                    pass
+                except NoValidParserError:
                     pass
 
         return self.scores
@@ -92,20 +102,20 @@ class Scorer:
 
         # Preliminary checks
         if file_path[:len(self._dir_path)] != self._dir_path:
-            raise ValueError("the file must be located in the specified directory")
+            raise ExternalFileError("the file must be located in the specified directory")
         if file_path in self._scores:
             return self._scores[file_path]
 
         valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._import_parsers))
         if not valid_parsers:
-            raise ValueError("unable to parse provided file")
+            raise NoValidParserError("unable to parse provided file")
         parser = valid_parsers[0]
 
         try:
             with open(file_path) as file:
                 contents = file.read()
         except FileNotFoundError:  # Primarily used to weed out builtins
-            raise ValueError("the file must be located in the specified directory")
+            raise ExternalFileError("the file must be located in the specified directory")
 
         dependencies_paths = parser.get_dependencies_paths(contents, path.dirname(file_path))
 
@@ -120,7 +130,9 @@ class Scorer:
                 score = max(score, dependency_score+do_increment_score)
 
                 self._connections[file_path].add(dependency_path)
-            except ValueError:
+            except ExternalFileError:
+                pass
+            except NoValidParserError:
                 pass
 
         self._scores[file_path] = score
