@@ -171,14 +171,18 @@ class Scorer:
         (requires graphviz package, and also for Graphviz to be installed)
         """
 
-        def get_node_id(num):
-            if num < 1:
+        def get_node_id(integer):
+            """
+            Generates a unique combination of uppercase letters from the provided integer
+            """
+
+            if integer < 1:
                 raise ValueError("node ID calculation does not work for values less than 1")
 
             result = ""
-            while num > 0:
-                rem = (num-1) % 26
-                num = int((num-rem)/26)
+            while integer > 0:
+                rem = (integer - 1) % 26
+                integer = int((integer - rem) / 26)
 
                 result = ascii_uppercase[rem] + result
 
@@ -215,7 +219,7 @@ class Scorer:
         print(subgraphs.values())
         graph.view()
 
-    def get_label(self, file_path):
+    def get_label(self, file_path, scorebar_chars=("■", "□"), scorebar_length=10):
         """
         Provides a concrete implementation for prettifying a file path into a label
         """
@@ -223,8 +227,16 @@ class Scorer:
         result = file_path.replace(self._dir_path+"\\", "")
         result = result.replace("\\", " ▼\n")
 
-        score = self._scores[file_path]
-        max_score = max(self.scores.values())
-        result += "\n" + f"{'■' * score}{'□' * (max_score - score)}"
+        if scorebar_length > 0:  # 0 or less will not generate a scorebar at all
+            file_score = self._scores[file_path]
+            max_score = max(self.scores.values())
+            scorebar = ""
+            for score_index in range(max_score):
+                if score_index % scorebar_length == 0:
+                    scorebar += "\n"
+
+                scorebar += (scorebar_chars[not (score_index < file_score)])
+
+            result += scorebar
 
         return result
