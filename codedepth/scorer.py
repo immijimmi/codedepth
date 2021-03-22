@@ -117,19 +117,19 @@ class Scorer:
         except FileNotFoundError:  # Primarily used to weed out builtins
             raise ExternalFileError("the file must be located in the specified directory")
 
-        dependencies_paths = parser.get_dependencies_paths(contents, path.dirname(file_path))
+        import_targets = parser.parse(contents, path.dirname(file_path))
 
         score = 0
         self._connections[file_path] = set()
 
-        for dependency_path in dependencies_paths:
-            do_increment_score = self.is_valid_file(dependency_path)  # Filtered files do not increment score
+        for import_target in import_targets:
+            do_increment_score = self.is_valid_file(import_target)  # Filtered files do not increment score
 
             try:
-                dependency_score = self.generate_score(dependency_path)
+                dependency_score = self.generate_score(import_target)
                 score = max(score, dependency_score+do_increment_score)
 
-                self._connections[file_path].add(dependency_path)
+                self._connections[file_path].add(import_target)
             except ExternalFileError:
                 pass
             except NoValidParserError:
@@ -171,7 +171,7 @@ class Scorer:
         result = result.replace("\\", " ▼\n")
 
         score = self._scores[file_path]
-        max_score = max(*self._scores.values())
+        max_score = max(self.scores.values())
         result += "\n\n" + f"({'★' * score}{'☆' * (max_score - score)})"
 
         return result

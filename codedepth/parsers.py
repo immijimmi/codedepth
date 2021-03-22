@@ -1,23 +1,5 @@
 from ast import walk, parse, Import, ImportFrom
-from contextlib import contextmanager
-from sys import path as syspath
 from os import path as ospath
-from importlib import util
-
-
-@contextmanager
-def temp_path_value(dir_path):
-    added = False
-    if dir_path not in syspath:
-        added = True
-        syspath.insert(0, dir_path)
-    yield
-
-    if added:
-        try:
-            syspath.remove(dir_path)
-        except ValueError:
-            pass
 
 
 class PyImportParser:
@@ -31,15 +13,15 @@ class PyImportParser:
         return filename[-3:] == ".py" or filename[-4:] == ".pyw"
 
     @staticmethod
-    def get_dependencies_paths(file_contents, working_dir):
+    def parse(file_contents, working_dir):
         nodes = walk(parse(file_contents))
 
         for node in nodes:
             if isinstance(node, Import):
                 for name_node in node.names:
-                    with temp_path_value(working_dir):
-                        origin = util.find_spec(name_node.name).origin
-                    yield origin
+                    target_path = PyImportParser._get_import_target(working_dir, name_node.name)
+                    if target_path:
+                        yield target_path
 
             elif isinstance(node, ImportFrom):
                 offset_working_dir = working_dir
@@ -48,12 +30,21 @@ class PyImportParser:
                     for i in range(node.level-1):
                         offset_working_dir = ospath.dirname(offset_working_dir)  # Go up 1 directory
                 if node.module:
-                    with temp_path_value(offset_working_dir):
-                        origin = util.find_spec(node.module).origin
-                    yield origin
+                    target_path = PyImportParser._get_import_target(offset_working_dir, node.module)
+                    if target_path:
+                        yield target_path
 
                 else:
                     for name_node in node.names:
-                        with temp_path_value(offset_working_dir):
-                            origin = util.find_spec(name_node.name).origin
-                        yield origin
+                        target_path = PyImportParser._get_import_target(offset_working_dir, name_node.name)
+                        if target_path:
+                            yield target_path
+
+    @staticmethod
+    def _get_import_target(working_dir, ast_import_node):
+        working_target = working_dir + "\\" + ast_import_node.replace(".", "\\")
+
+        for path_ending in [r"\__init__.py", r"\__init__.pyw", ".py", ".pyw"]:
+            result = working_target + path_ending
+            if ospath.isfile(result):
+                return result
