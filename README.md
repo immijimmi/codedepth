@@ -9,7 +9,7 @@ Below is an example of scores being generated and then displayed in graph forms,
 ```python
 from codedepth import Scorer
 
-scorer = Scorer(r"C:\Repos\managedstate\managedstate")
+scorer = Scorer(r"C:\Repos\managedstate\managedstate")  # Replace this directory path with your own
 
 # Calculates scores for all files in the provided directory
 scorer.generate_scores()
