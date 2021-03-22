@@ -17,7 +17,8 @@ scorer.generate_scores()
 """
 Generates a PDF saved in the working directory,
 containing a ranked directional graph of the file dependencies.
-Once this is generated, it will be opened automatically
+Once this is generated, it will be opened automatically.
+Also generates and saves a file containing the DOT code required to create the graph
 """
 scorer.plot_ranked()
 
