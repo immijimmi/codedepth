@@ -1,6 +1,9 @@
-from os import path, walk
 from networkx import DiGraph, draw_shell as draw
+from graphviz import Digraph
 from matplotlib import pyplot
+
+from os import path, walk
+from string import ascii_uppercase
 
 from .parsers import PyImportParser
 
@@ -141,10 +144,10 @@ class Scorer:
     def is_valid_file(self, file_path):
         return all(func(file_path) for func in self._filters)
 
-    def plot_digraph(self, node_size=12500, alpha=0.35):
+    def plot_circular(self, node_size=12500, alpha=0.35):
         """
-        Basic grapher to display generated scores/connections. Not guaranteed to produce aesthetic graphs when
-        provided with more complex dependency networks
+        Plots a circular dependency graph using Matplotlib
+        (requires matplotlib package)
         """
 
         connections = {}
@@ -162,6 +165,56 @@ class Scorer:
         draw(graph, with_labels=True, node_size=node_size, alpha=alpha, arrows=True)
         pyplot.show()
 
+    def plot_ranked(self):
+        """
+        Plots a ranked dependency graph using Graphviz
+        (requires graphviz package, and also for Graphviz to be installed)
+        """
+
+        def get_node_id(num):
+            if num < 1:
+                raise ValueError("node ID calculation does not work for values less than 1")
+
+            result = ""
+            while num > 0:
+                rem = (num-1) % 26
+                num = int((num-rem)/26)
+
+                result = ascii_uppercase[rem] + result
+
+            return result
+
+        connections_working = self.connections
+
+        graph = Digraph()
+        subgraphs = {}
+        node_ids = {}
+
+        for parent_index, parent in enumerate(connections_working):
+            score = self._scores[parent]
+            if score not in subgraphs:
+                subgraphs[score] = Digraph()
+                subgraphs[score].attr(rank="same")  #####
+            subgraph = subgraphs[score]
+
+            parent_node_id = get_node_id(parent_index + 1)
+            node_ids[parent] = parent_node_id
+            subgraph.node(parent_node_id, self.get_label(parent))
+
+        for parent_index, parent in enumerate(connections_working):
+            parent_node_id = get_node_id(parent_index+1)
+
+            children = connections_working[parent]
+            for child in children:
+                child_node_id = node_ids[child]
+                graph.edge(child_node_id, parent_node_id)  # TODO: Is constraint='false' necessary?
+
+        for subgraph in subgraphs.values():
+            graph.subgraph(subgraph)
+
+        print(subgraphs.values())
+        graph.view()
+
     def get_label(self, file_path):
         """
         Provides a concrete implementation for prettifying a file path into a label
@@ -172,6 +225,6 @@ class Scorer:
 
         score = self._scores[file_path]
         max_score = max(self.scores.values())
-        result += "\n\n" + f"({'★' * score}{'☆' * (max_score - score)})"
+        result += "\n" + f"{'■' * score}{'□' * (max_score - score)}"
 
         return result
