@@ -21,8 +21,6 @@ Once this is generated, it will be opened automatically
 """
 scorer.plot_ranked()
 
-"""
-Generates and displays a circular directional graph of the file dependencies in memory
-"""
+# Generates and displays a circular directional graph of the file dependencies in memory
 scorer.plot_circular()
 ```
