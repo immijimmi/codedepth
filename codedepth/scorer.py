@@ -3,9 +3,10 @@ from graphviz import Digraph
 from matplotlib import pyplot
 
 from os import path, walk
+from sys import setrecursionlimit
 from string import ascii_uppercase
 
-from .parsers import PyParser
+from .parsers import PyParser, LuaParser
 from .constants import Errors
 
 
@@ -16,7 +17,7 @@ class Scorer:
         self._filters = set(filters)
         self.sorters = [*sorters]  # This can be public, because changes after instantiation will not affect the data
 
-        self._import_parsers = (PyParser,)
+        self._import_parsers = (PyParser, LuaParser)
         if use_parser_filters:
             for parser in self._import_parsers:
                 for func in parser.filters:
@@ -24,6 +25,8 @@ class Scorer:
 
         self._scores = {}
         self._connections = {}
+
+        setrecursionlimit(10000)
 
     @property
     def dir_path(self):
@@ -113,7 +116,7 @@ class Scorer:
         except FileNotFoundError:  # Primarily used to weed out builtins
             raise Errors.ExternalFileError("the file must be located in the specified directory")
 
-        import_targets = parser.parse(contents, path.dirname(file_path))
+        import_targets = parser.parse(contents, path.dirname(file_path), self._dir_path)
 
         score = 0
         self._connections[file_path] = set()
@@ -209,7 +212,6 @@ class Scorer:
         for subgraph in subgraphs.values():
             graph.subgraph(subgraph)
 
-        print(subgraphs.values())
         graph.view()
 
     def get_label(self, file_path, scorebar_chars=("■", "□"), scorebar_length=10):
