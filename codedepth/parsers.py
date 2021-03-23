@@ -3,7 +3,7 @@ from os import path as ospath
 
 
 class PyImportParser:
-    FILTERS = (
+    filters = (
         lambda filename: filename[-12:] != r"\__init__.py",
         lambda filename: filename[-13:] != r"\constants.py"
     )

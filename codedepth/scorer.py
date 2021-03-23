@@ -26,7 +26,7 @@ class Scorer:
         self._import_parsers = (PyImportParser,)
         if use_parser_filters:
             for parser in self._import_parsers:
-                for func in parser.FILTERS:
+                for func in parser.filters:
                     self._filters.add(func)
 
         self._scores = {}
