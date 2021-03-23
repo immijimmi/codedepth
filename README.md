@@ -2,6 +2,15 @@
 
 ###### Generates scores for how many layers of local imports are in a file
 
+## Dependencies
+
+You will need the following packages:
+- `pip install networkx`
+- `pip intall matplotlib`
+- `pip install graphviz`
+
+You will also need Graphviz installed as an application - installation instructions can be found at https://graphviz.org/download/
+
 ## Quickstart
 
 Below is an example of scores being generated and then displayed in graph forms, for files in the provided directory.
