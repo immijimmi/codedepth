@@ -6,9 +6,9 @@ from .parser import Parser
 
 class LuaParser(Parser):
     filters = frozenset((
-        lambda filename: filename[-9:] != r"\init.lua",
-        lambda filename: filename[-14:] != r"\constants.lua",
-        lambda filename: filename[-11:] != r"\config.lua"
+        lambda file_path: file_path[-9:] != r"\init.lua",
+        lambda file_path: file_path[-14:] != r"\constants.lua",
+        lambda file_path: file_path[-11:] != r"\config.lua"
     ))
 
     _node_endings = (
@@ -19,8 +19,8 @@ class LuaParser(Parser):
     _pattern = compile(r"require\((\"|\')((.|\s)*?)\1\)")
 
     @staticmethod
-    def can_parse(filename: str) -> bool:
-        return filename[-4:] == ".lua"
+    def can_parse(file_path: str) -> bool:
+        return file_path[-4:] == ".lua"
 
     @staticmethod
     def parse(file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:

@@ -7,9 +7,10 @@ from .parser import Parser
 
 class PyParser(Parser):
     filters = frozenset((
-        lambda filename: filename[-12:] != r"\__init__.py",
-        lambda filename: filename[-13:] != r"\constants.py",
-        lambda filename: filename[-10:] != r"\config.py"
+        lambda file_path: file_path[-12:] != r"\__init__.py",
+        lambda file_path: file_path[-13:] != r"\constants.py",
+        lambda file_path: file_path[-10:] != r"\config.py",
+        lambda file_path: file_path[-12:] != r"\__main__.py"
     ))
 
     _node_endings = (
@@ -20,8 +21,8 @@ class PyParser(Parser):
     )
 
     @staticmethod
-    def can_parse(filename: str) -> bool:
-        return filename[-3:] == ".py" or filename[-4:] == ".pyw"
+    def can_parse(file_path: str) -> bool:
+        return file_path[-3:] == ".py" or file_path[-4:] == ".pyw"
 
     @staticmethod
     def parse(file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:

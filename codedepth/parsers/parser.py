@@ -13,7 +13,7 @@ class Parser(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def can_parse(filename: str) -> bool:
+    def can_parse(file_path: str) -> bool:
         raise NotImplementedError
 
     @staticmethod
