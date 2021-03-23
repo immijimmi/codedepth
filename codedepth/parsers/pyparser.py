@@ -1,5 +1,6 @@
 from ast import walk, parse, Import, ImportFrom
 from os import path as ospath
+from typing import Generator
 
 from .parser import Parser
 
@@ -7,15 +8,16 @@ from .parser import Parser
 class PyParser(Parser):
     filters = (
         lambda filename: filename[-12:] != r"\__init__.py",
-        lambda filename: filename[-13:] != r"\constants.py"
+        lambda filename: filename[-13:] != r"\constants.py",
+        lambda filename: filename[-10:] != r"\config.py"
     )
 
     @staticmethod
-    def can_parse(filename):
+    def can_parse(filename: str) -> bool:
         return filename[-3:] == ".py" or filename[-4:] == ".pyw"
 
     @staticmethod
-    def parse(file_contents, working_dir):
+    def parse(file_contents: str, working_dir: str) -> Generator[str, None, None]:
         nodes = walk(parse(file_contents))
 
         for node in nodes:
