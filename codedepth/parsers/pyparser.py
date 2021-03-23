@@ -1,8 +1,10 @@
 from ast import walk, parse, Import, ImportFrom
 from os import path as ospath
 
+from .parser import Parser
 
-class PyParser:
+
+class PyParser(Parser):
     filters = (
         lambda filename: filename[-12:] != r"\__init__.py",
         lambda filename: filename[-13:] != r"\constants.py"

@@ -5,7 +5,7 @@ from matplotlib import pyplot
 from os import path, walk
 from string import ascii_uppercase
 
-from .importparsers import PyParser
+from .parsers import PyParser
 from .constants import Errors
 
 
