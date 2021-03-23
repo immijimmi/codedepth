@@ -5,15 +5,8 @@ from matplotlib import pyplot
 from os import path, walk
 from string import ascii_uppercase
 
-from .parsers import PyImportParser
-
-
-class ExternalFileError(FileNotFoundError):
-    pass
-
-
-class NoValidParserError(NotImplementedError):
-    pass
+from .importparsers import PyParser
+from .constants import Errors
 
 
 class Scorer:
@@ -23,7 +16,7 @@ class Scorer:
         self._filters = set(filters)
         self.sorters = [*sorters]  # This can be public, because changes after instantiation will not affect the data
 
-        self._import_parsers = (PyImportParser,)
+        self._import_parsers = (PyParser,)
         if use_parser_filters:
             for parser in self._import_parsers:
                 for func in parser.filters:
@@ -93,9 +86,9 @@ class Scorer:
                 file_path = path.join(_path, name)
                 try:
                     self.generate_score(file_path)
-                except ExternalFileError:
+                except Errors.ExternalFileError:
                     pass
-                except NoValidParserError:
+                except Errors.NoValidParserError:
                     pass
 
         return self.scores
@@ -105,20 +98,20 @@ class Scorer:
 
         # Preliminary checks
         if file_path[:len(self._dir_path)] != self._dir_path:
-            raise ExternalFileError("the file must be located in the specified directory")
+            raise Errors.ExternalFileError("the file must be located in the specified directory")
         if file_path in self._scores:
             return self._scores[file_path]
 
         valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._import_parsers))
         if not valid_parsers:
-            raise NoValidParserError("unable to parse provided file")
+            raise Errors.NoValidParserError("unable to parse provided file")
         parser = valid_parsers[0]
 
         try:
             with open(file_path) as file:
                 contents = file.read()
         except FileNotFoundError:  # Primarily used to weed out builtins
-            raise ExternalFileError("the file must be located in the specified directory")
+            raise Errors.ExternalFileError("the file must be located in the specified directory")
 
         import_targets = parser.parse(contents, path.dirname(file_path))
 
@@ -133,9 +126,9 @@ class Scorer:
                 score = max(score, dependency_score+do_increment_score)
 
                 self._connections[file_path].add(import_target)
-            except ExternalFileError:
+            except Errors.ExternalFileError:
                 pass
-            except NoValidParserError:
+            except Errors.NoValidParserError:
                 pass
 
         self._scores[file_path] = score
@@ -198,7 +191,7 @@ class Scorer:
             score = self._scores[parent]
             if score not in subgraphs:
                 subgraphs[score] = Digraph()
-                subgraphs[score].attr(rank="same")  #####
+                subgraphs[score].attr(rank="same")
             subgraph = subgraphs[score]
 
             parent_node_id = get_node_id(parent_index + 1)
@@ -211,7 +204,7 @@ class Scorer:
             children = connections_working[parent]
             for child in children:
                 child_node_id = node_ids[child]
-                graph.edge(child_node_id, parent_node_id)  # TODO: Is constraint='false' necessary?
+                graph.edge(child_node_id, parent_node_id)
 
         for subgraph in subgraphs.values():
             graph.subgraph(subgraph)
