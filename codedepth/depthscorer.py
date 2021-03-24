@@ -53,35 +53,7 @@ class DepthScorer:
 
     @property
     def imports(self):
-        result = {}
-        working_result = self._imports
-
-        changes_made = True
-        while changes_made:
-            result = {}
-            changes_made = False
-
-            for parent, children in working_result.items():
-                if self.is_valid_file(parent):
-                    filtered_children = set()
-
-                    for child in children:
-                        if self.is_valid_file(child):
-                            filtered_children.add(child)
-                        else:
-                            changes_made = True
-
-                            for nested_child in self._imports[child]:
-                                filtered_children.add(nested_child)
-
-                    result[parent] = filtered_children
-
-                else:
-                    changes_made = True  # Entry was filtered out of the result via omission
-
-            working_result = {**result}
-
-        return result
+        return self._filter_connections(self._imports)
 
     def parse_all(self):
         for _path, subdirs, files in walk(self._dir_path):
@@ -233,5 +205,36 @@ class DepthScorer:
                 scorebar += (scorebar_chars[not (score_index < file_depth)])
 
             result += scorebar
+
+        return result
+
+    def _filter_connections(self, connections_dict):
+        result = {}
+        working_result = connections_dict
+
+        changes_made = True
+        while changes_made:
+            result = {}
+            changes_made = False
+
+            for parent, children in working_result.items():
+                if self.is_valid_file(parent):
+                    filtered_children = set()
+
+                    for child in children:
+                        if self.is_valid_file(child):
+                            filtered_children.add(child)
+                        else:
+                            changes_made = True
+
+                            for nested_child in connections_dict[child]:
+                                filtered_children.add(nested_child)
+
+                    result[parent] = filtered_children
+
+                else:
+                    changes_made = True  # Entry was filtered out of the result via omission
+
+            working_result = {**result}
 
         return result
