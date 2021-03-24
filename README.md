@@ -1,6 +1,6 @@
 # codedepth
 
-###### Generates scores for how many layers of local imports are in a file
+###### Generates scores for how many layers of local imports/exports are in a file
 
 ## Dependencies
 
@@ -22,12 +22,12 @@ C:\Repos\codedepth> python -m codedepth <path of the target directory>
 In a python script:
 
 ```python
-from codedepth import Scorer
+from codedepth import DepthScorer
 
-scorer = Scorer(r"<path of the target directory>")  # Replace this path string with your own
+scorer = DepthScorer(r"<path of the target directory>")  # Replace this path string with your own
 
 # Calculates scores for all files in the target directory
-scorer.generate_scores()
+scorer.parse_all()
 
 """
 Generates a PDF saved in the working directory,

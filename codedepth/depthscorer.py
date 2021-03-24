@@ -10,7 +10,7 @@ from .parsers import PyParser, LuaParser
 from .constants import Errors
 
 
-class Scorer:
+class DepthScorer:
     def __init__(self, dir_path, filters=(), sorters=(), use_parser_filters=True):
         self._dir_path = path.abspath(dir_path)
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
@@ -23,8 +23,8 @@ class Scorer:
                 for func in parser.filters:
                     self._filters.add(func)
 
-        self._scores = {}
-        self._connections = {}
+        self._depths = {}
+        self._imports = {}
 
         setrecursionlimit(10000)
 
@@ -33,18 +33,18 @@ class Scorer:
         return self._dir_path
 
     @property
-    def scores(self):
+    def depths(self):
         result = {}
 
-        for key, value in self._scores.items():
+        for key, value in self._depths.items():
             if all(func(key) for func in self._filters):
                 result.update({key: value})
 
         return result
 
     @property
-    def score_items(self):
-        result = self.scores.items()
+    def depths_items(self):
+        result = self.depths.items()
 
         for func in self.sorters:
             result = sorted(result, key=func)
@@ -52,9 +52,9 @@ class Scorer:
         return result
 
     @property
-    def connections(self):
+    def imports(self):
         result = {}
-        working_result = self._connections
+        working_result = self._imports
 
         changes_made = True
         while changes_made:
@@ -71,7 +71,7 @@ class Scorer:
                         else:
                             changes_made = True
 
-                            for nested_child in self._connections[child]:
+                            for nested_child in self._imports[child]:
                                 filtered_children.add(nested_child)
 
                     result[parent] = filtered_children
@@ -83,27 +83,27 @@ class Scorer:
 
         return result
 
-    def generate_scores(self):
+    def parse_all(self):
         for _path, subdirs, files in walk(self._dir_path):
             for name in files:
                 file_path = path.join(_path, name)
                 try:
-                    self.generate_score(file_path)
+                    self.parse(file_path)
                 except Errors.ExternalFileError:
                     pass
                 except Errors.NoValidParserError:
                     pass
 
-        return self.scores
+        return self.depths
 
-    def generate_score(self, file_path):
+    def parse(self, file_path):
         file_path = path.abspath(file_path)
 
         # Preliminary checks
         if file_path[:len(self._dir_path)] != self._dir_path:
             raise Errors.ExternalFileError("the file must be located in the specified directory")
-        if file_path in self._scores:
-            return self._scores[file_path]
+        if file_path in self._depths:
+            return self._depths[file_path]
 
         valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._import_parsers))
         if not valid_parsers:
@@ -118,24 +118,24 @@ class Scorer:
 
         import_targets = parser.parse(contents, path.dirname(file_path), self._dir_path)
 
-        score = 0
-        self._connections[file_path] = set()
+        depth = 0
+        self._imports[file_path] = set()
 
         for import_target in import_targets:
-            do_increment_score = self.is_valid_file(import_target)  # Filtered files do not increment score
+            do_increment_depth = self.is_valid_file(import_target)  # Filtered files do not increase depth
 
             try:
-                dependency_score = self.generate_score(import_target)
-                score = max(score, dependency_score+do_increment_score)
+                dependency_depth = self.parse(import_target)
+                depth = max(depth, dependency_depth+do_increment_depth)
 
-                self._connections[file_path].add(import_target)
+                self._imports[file_path].add(import_target)
             except Errors.ExternalFileError:
                 pass
             except Errors.NoValidParserError:
                 pass
 
-        self._scores[file_path] = score
-        return score
+        self._depths[file_path] = depth
+        return depth
 
     def is_valid_file(self, file_path):
         return all(func(file_path) for func in self._filters)
@@ -149,7 +149,7 @@ class Scorer:
         connections = {}
 
         # Prettify data labels
-        for parent, children in self.connections.items():
+        for parent, children in self.imports.items():
             abbreviated_children = set()
 
             for child in children:
@@ -184,18 +184,18 @@ class Scorer:
 
             return result
 
-        connections_working = self.connections
+        connections_working = self.imports
 
         graph = Digraph()
         subgraphs = {}
         node_ids = {}
 
         for parent_index, parent in enumerate(connections_working):
-            score = self._scores[parent]
-            if score not in subgraphs:
-                subgraphs[score] = Digraph()
-                subgraphs[score].attr(rank="same")
-            subgraph = subgraphs[score]
+            depth = self._depths[parent]
+            if depth not in subgraphs:
+                subgraphs[depth] = Digraph()
+                subgraphs[depth].attr(rank="same")
+            subgraph = subgraphs[depth]
 
             parent_node_id = get_node_id(parent_index + 1)
             node_ids[parent] = parent_node_id
@@ -223,14 +223,14 @@ class Scorer:
         result = result.replace("\\", " ▼\n")
 
         if scorebar_length > 0:  # 0 or less will not generate a scorebar at all
-            file_score = self._scores[file_path]
-            max_score = max(self.scores.values())
+            file_depth = self._depths[file_path]
+            max_depth = max(self.depths.values())
             scorebar = ""
-            for score_index in range(max_score):
+            for score_index in range(max_depth):
                 if score_index % scorebar_length == 0:
                     scorebar += "\n"
 
-                scorebar += (scorebar_chars[not (score_index < file_score)])
+                scorebar += (scorebar_chars[not (score_index < file_depth)])
 
             result += scorebar
 
