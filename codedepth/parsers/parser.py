@@ -5,7 +5,7 @@ from typing import Tuple, Callable, Generator, FrozenSet, Optional
 
 class Parser(ABC):
     @property
-    def filters(self) -> FrozenSet[Callable[[], bool]]:
+    def filters(self) -> FrozenSet[Callable[[str], bool]]:
         raise NotImplementedError
 
     @property

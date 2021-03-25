@@ -5,13 +5,19 @@ from matplotlib import pyplot
 from os import path, walk
 from sys import setrecursionlimit
 from string import ascii_uppercase
+from typing import Iterable, Callable, Tuple, Any, Dict, Set, Sequence
 
 from .parsers import PyParser, LuaParser
 from .constants import Errors
 
 
 class DepthScorer:
-    def __init__(self, dir_path, filters=(), sorters=(), use_parser_filters=True):
+    def __init__(
+            self, dir_path: str,
+            filters: Iterable[Callable[[str], bool]] = (),
+            sorters: Iterable[Callable[[Tuple[str, int]], Any]] = (),
+            use_parser_filters: bool = True
+    ):
         self._dir_path = path.abspath(dir_path)
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
         self._filters = set(filters)
@@ -29,11 +35,11 @@ class DepthScorer:
         setrecursionlimit(10000)
 
     @property
-    def dir_path(self):
+    def dir_path(self) -> str:
         return self._dir_path
 
     @property
-    def depths(self):
+    def depths(self) -> Dict[str, int]:
         result = {}
 
         for key, value in self._depths.items():
@@ -43,7 +49,7 @@ class DepthScorer:
         return result
 
     @property
-    def depths_items(self):
+    def depths_items(self) -> Iterable[Tuple[str, int]]:
         result = self.depths.items()
 
         for func in self.sorters:
@@ -52,10 +58,10 @@ class DepthScorer:
         return result
 
     @property
-    def imports(self):
+    def imports(self) -> Dict[str, Set[str]]:
         return self._filter_connections(self._imports)
 
-    def parse_all(self):
+    def parse_all(self) -> Dict[str, int]:
         for _path, subdirs, files in walk(self._dir_path):
             for name in files:
                 file_path = path.join(_path, name)
@@ -68,7 +74,7 @@ class DepthScorer:
 
         return self.depths
 
-    def parse(self, file_path):
+    def parse(self, file_path: str) -> int:
         file_path = path.abspath(file_path)
 
         # Preliminary checks
@@ -109,10 +115,10 @@ class DepthScorer:
         self._depths[file_path] = depth
         return depth
 
-    def is_valid_file(self, file_path):
+    def is_valid_file(self, file_path: str) -> bool:
         return all(func(file_path) for func in self._filters)
 
-    def plot_circular(self, node_size=12500, alpha=0.35):
+    def plot_circular(self, node_size: int = 12500, alpha: float = 0.35) -> None:
         """
         Plots a circular dependency graph using Matplotlib
         (requires matplotlib package)
@@ -133,13 +139,13 @@ class DepthScorer:
         draw(graph, with_labels=True, node_size=node_size, alpha=alpha, arrows=True)
         pyplot.show()
 
-    def plot_ranked(self):
+    def plot_ranked(self) -> None:
         """
         Plots a ranked dependency graph using Graphviz
         (requires graphviz package, and also for Graphviz to be installed)
         """
 
-        def get_node_id(integer):
+        def get_node_id(integer: int) -> str:
             """
             Generates a unique combination of uppercase letters from the provided integer
             """
@@ -186,7 +192,7 @@ class DepthScorer:
 
         graph.view()
 
-    def get_label(self, file_path, scorebar_chars=("■", "□"), scorebar_length=10):
+    def get_label(self, file_path: str, scorebar_chars: Sequence[str] = ("■", "□"), scorebar_length: int = 10) -> str:
         """
         Provides a concrete implementation for prettifying a file path into a label
         """
@@ -208,9 +214,9 @@ class DepthScorer:
 
         return result
 
-    def _filter_connections(self, connections_dict):
+    def _filter_connections(self, connections: Dict[str, Iterable[str]]):
         result = {}
-        working_result = connections_dict
+        working_result = connections
 
         changes_made = True
         while changes_made:
@@ -227,7 +233,7 @@ class DepthScorer:
                         else:
                             changes_made = True
 
-                            for nested_child in connections_dict[child]:
+                            for nested_child in connections[child]:
                                 filtered_children.add(nested_child)
 
                     result[parent] = filtered_children
