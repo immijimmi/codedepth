@@ -201,7 +201,14 @@ class Scorer:
 
             parent_node_id = get_node_id(parent_index + 1)
             node_ids[parent] = parent_node_id
-            subgraph.node(parent_node_id, self.get_label(parent))
+
+            node_colour, node_border_colour = self._colour_picker.get(
+                parent, self._imports[parent], self._exports[parent]
+            )
+            subgraph.node(
+                parent_node_id, self.get_label(parent),
+                color=node_border_colour, style="filled", fillcolor=node_colour
+            )
 
         for parent_index, parent in enumerate(connections_working):
             parent_node_id = get_node_id(parent_index+1)
@@ -209,7 +216,9 @@ class Scorer:
             children = connections_working[parent]
             for child in children:
                 child_node_id = node_ids[child]
-                graph.edge(child_node_id, parent_node_id)
+
+                edge_colour = self._colour_picker.get(child, self._imports[child], self._exports[child])[1]
+                graph.edge(child_node_id, parent_node_id, color=edge_colour)
 
         for subgraph in subgraphs.values():
             graph.subgraph(subgraph)

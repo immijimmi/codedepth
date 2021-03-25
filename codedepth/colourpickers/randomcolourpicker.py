@@ -2,14 +2,15 @@ from typing import Iterable, Tuple
 from random import choice
 
 from .colourpicker import ColourPicker
+from .constants import Constants
 
 
 class RandomColourPicker(ColourPicker):
-    colours = {}
+    colours = Constants.colours["pastel"]
     history = {}
 
     @classmethod
-    def get(cls, file_path: str, dependency_paths: Iterable[str], dependent_paths: Iterable[str]) -> Tuple[str]:
+    def get(cls, file_path: str, dependency_paths: Iterable[str], dependent_paths: Iterable[str]) -> Tuple[str, str]:
         if file_path not in cls.history:
             used_colours = {colour: 0 for colour in cls.colours}
             for connection_list in (dependency_paths, dependent_paths):
