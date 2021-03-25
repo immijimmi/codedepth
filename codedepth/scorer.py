@@ -157,7 +157,7 @@ class Scorer:
         draw(graph, with_labels=True, node_size=node_size, alpha=alpha, arrows=True)
         pyplot.show()
 
-    def plot_ranked(self) -> None:
+    def plot_ranked(self, reversed_score_positioning: bool = True) -> None:
         """
         Plots a ranked dependency graph using Graphviz
         (requires graphviz package, and also for Graphviz to be installed)
@@ -181,17 +181,18 @@ class Scorer:
             return result
 
         connections_working = self.imports
+        scores_working = self.abstraction_scores if reversed_score_positioning else self.layer_scores
 
         graph = Digraph()
         subgraphs = {}
         node_ids = {}
 
         for parent_index, parent in enumerate(connections_working):
-            layer_score = self._layer_scores[parent]
-            if layer_score not in subgraphs:
-                subgraphs[layer_score] = Digraph()
-                subgraphs[layer_score].attr(rank="same")
-            subgraph = subgraphs[layer_score]
+            node_score = scores_working[parent]
+            if node_score not in subgraphs:
+                subgraphs[node_score] = Digraph()
+                subgraphs[node_score].attr(rank="same")
+            subgraph = subgraphs[node_score]
 
             parent_node_id = get_node_id(parent_index + 1)
             node_ids[parent] = parent_node_id
@@ -236,7 +237,7 @@ class Scorer:
         abstraction_score = 0
         working_exports = self.exports
 
-        while self.exports:
+        while working_exports:
             completed_files = set()
 
             for parent, children in working_exports.items():
@@ -255,7 +256,7 @@ class Scorer:
 
             abstraction_score -= 1
 
-    def _filtered_connections(self, connections: Dict[str, Iterable[str]]):
+    def _filtered_connections(self, connections: Dict[str, Iterable[str]]) -> Dict[str, Set[str]]:
         result = {}
         working_result = connections
 
