@@ -1,1 +1,1 @@
-from .depthscorer import DepthScorer
+from .scorer import Scorer

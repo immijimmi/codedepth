@@ -9,6 +9,6 @@ if len(argv) != expected_args+1:
         f"{expected_args} initial argument{'' if expected_args == 1 else 's'} expected, received {len(argv)-1}"
     )
 
-s = DepthScorer(argv[1])
+s = Scorer(argv[1])
 s.parse_all()
 s.plot_ranked()

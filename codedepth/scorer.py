@@ -11,17 +11,15 @@ from .parsers import PyParser, LuaParser
 from .constants import Errors
 
 
-class DepthScorer:
+class Scorer:
     def __init__(
             self, dir_path: str,
             filters: Iterable[Callable[[str], bool]] = (),
-            sorters: Iterable[Callable[[Tuple[str, int]], Any]] = (),
             use_parser_filters: bool = True
     ):
         self._dir_path = path.abspath(dir_path)
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
         self._filters = set(filters)
-        self.sorters = [*sorters]  # This can be public, because changes after instantiation will not affect the data
 
         self._import_parsers = (PyParser, LuaParser)
         if use_parser_filters:
@@ -29,8 +27,10 @@ class DepthScorer:
                 for func in parser.filters:
                     self._filters.add(func)
 
-        self._depths = {}
+        self._layer_scores = {}
+        self._abstraction_scores = {}
         self._imports = {}
+        self._exports = {}
 
         setrecursionlimit(10000)
 
@@ -39,27 +39,40 @@ class DepthScorer:
         return self._dir_path
 
     @property
-    def depths(self) -> Dict[str, int]:
+    def layer_scores(self) -> Dict[str, int]:
         result = {}
 
-        for key, value in self._depths.items():
+        for key, value in self._layer_scores.items():
             if all(func(key) for func in self._filters):
                 result.update({key: value})
 
         return result
 
     @property
-    def depths_items(self) -> Iterable[Tuple[str, int]]:
-        result = self.depths.items()
+    def abstraction_scores(self) -> Dict[str, int]:
+        """
+        Unlike with layer scores, abstraction scores cannot be calculated with minimal overhead when already calculating
+        connections in parse(). Therefore, it is calculated JIT in this property
+        """
 
-        for func in self.sorters:
-            result = sorted(result, key=func)
+        if len(self._abstraction_scores) < len(self._layer_scores):
+            self._generate_abstraction_scores()
+
+        result = {}
+
+        for key, value in self._abstraction_scores.items():
+            if all(func(key) for func in self._filters):
+                result.update({key: value})
 
         return result
 
     @property
     def imports(self) -> Dict[str, Set[str]]:
-        return self._filter_connections(self._imports)
+        return self._filtered_connections(self._imports)
+
+    @property
+    def exports(self) -> Dict[str, Set[str]]:
+        return self._filtered_connections(self._exports)
 
     def parse_all(self) -> Dict[str, int]:
         for _path, subdirs, files in walk(self._dir_path):
@@ -72,7 +85,7 @@ class DepthScorer:
                 except Errors.NoValidParserError:
                     pass
 
-        return self.depths
+        return self.layer_scores
 
     def parse(self, file_path: str) -> int:
         file_path = path.abspath(file_path)
@@ -80,8 +93,8 @@ class DepthScorer:
         # Preliminary checks
         if file_path[:len(self._dir_path)] != self._dir_path:
             raise Errors.ExternalFileError("the file must be located in the specified directory")
-        if file_path in self._depths:
-            return self._depths[file_path]
+        if file_path in self._layer_scores:
+            return self._layer_scores[file_path]
 
         valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._import_parsers))
         if not valid_parsers:
@@ -96,24 +109,29 @@ class DepthScorer:
 
         import_targets = parser.parse(contents, path.dirname(file_path), self._dir_path)
 
-        depth = 0
-        self._imports[file_path] = set()
+        layer_score = 0
+        if file_path not in self._imports:
+            self._imports[file_path] = set()
 
         for import_target in import_targets:
-            do_increment_depth = self.is_valid_file(import_target)  # Filtered files do not increase depth
+            do_increment_layer = self.is_valid_file(import_target)  # Filtered files do not increase layer
 
             try:
-                dependency_depth = self.parse(import_target)
-                depth = max(depth, dependency_depth+do_increment_depth)
+                dependency_layer = self.parse(import_target)
+                layer_score = max(layer_score, dependency_layer+do_increment_layer)
 
+                # If self.parse() did not raise an exception, import_target is a valid file to add to connections dicts
                 self._imports[file_path].add(import_target)
+                if import_target not in self._exports:
+                    self._exports[import_target] = set()
+                self._exports[import_target].add(file_path)
             except Errors.ExternalFileError:
                 pass
             except Errors.NoValidParserError:
                 pass
 
-        self._depths[file_path] = depth
-        return depth
+        self._layer_scores[file_path] = layer_score
+        return layer_score
 
     def is_valid_file(self, file_path: str) -> bool:
         return all(func(file_path) for func in self._filters)
@@ -169,11 +187,11 @@ class DepthScorer:
         node_ids = {}
 
         for parent_index, parent in enumerate(connections_working):
-            depth = self._depths[parent]
-            if depth not in subgraphs:
-                subgraphs[depth] = Digraph()
-                subgraphs[depth].attr(rank="same")
-            subgraph = subgraphs[depth]
+            layer_score = self._layer_scores[parent]
+            if layer_score not in subgraphs:
+                subgraphs[layer_score] = Digraph()
+                subgraphs[layer_score].attr(rank="same")
+            subgraph = subgraphs[layer_score]
 
             parent_node_id = get_node_id(parent_index + 1)
             node_ids[parent] = parent_node_id
@@ -201,20 +219,43 @@ class DepthScorer:
         result = result.replace("\\", " ▼\n")
 
         if scorebar_length > 0:  # 0 or less will not generate a scorebar at all
-            file_depth = self._depths[file_path]
-            max_depth = max(self.depths.values())
+            file_layer = self._layer_scores[file_path]
+            max_layer = max(self.layer_scores.values())
             scorebar = ""
-            for score_index in range(max_depth):
+            for score_index in range(max_layer):
                 if score_index % scorebar_length == 0:
                     scorebar += "\n"
 
-                scorebar += (scorebar_chars[not (score_index < file_depth)])
+                scorebar += (scorebar_chars[not (score_index < file_layer)])
 
             result += scorebar
 
         return result
 
-    def _filter_connections(self, connections: Dict[str, Iterable[str]]):
+    def _generate_abstraction_scores(self) -> None:
+        abstraction_score = 0
+        working_exports = self.exports
+
+        while self.exports:
+            completed_files = set()
+
+            for parent, children in working_exports.items():
+                is_exported = False  # Used to flag if a file is top-level or not in this round of checks
+                for child in children:
+                    if child in working_exports:
+                        is_exported = True
+                        break
+
+                if not is_exported:
+                    completed_files.add(parent)
+
+            for file_path in completed_files:
+                del working_exports[file_path]
+                self._abstraction_scores[file_path] = abstraction_score
+
+            abstraction_score -= 1
+
+    def _filtered_connections(self, connections: Dict[str, Iterable[str]]):
         result = {}
         working_result = connections
 

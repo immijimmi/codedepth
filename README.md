@@ -22,9 +22,9 @@ C:\Repos\codedepth> python -m codedepth <path of the target directory>
 In a python script:
 
 ```python
-from codedepth import DepthScorer
+from codedepth import Scorer
 
-scorer = DepthScorer(r"<path of the target directory>")  # Replace this path string with your own
+scorer = Scorer(r"<path of the target directory>")  # Replace this path string with your own
 
 # Calculates scores for all files in the target directory
 scorer.parse_all()
