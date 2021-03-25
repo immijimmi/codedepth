@@ -7,5 +7,8 @@ class Constants:
             "green": ("#DBFFCC", "#2D9900"),
             "blue": ("#CCE9FF", "#005999"),
             "purple": ("#EECCFF", "#660099"),
-        }
+        },
+        "greyscale": {
+            "grey": ("#CCCCCC", "#333333")
+        },
     }

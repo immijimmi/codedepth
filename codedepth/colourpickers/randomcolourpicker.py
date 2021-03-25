@@ -1,4 +1,4 @@
-from typing import Iterable, Tuple, Hashable
+from typing import Tuple, Hashable
 from random import choice
 
 from .colourpicker import ColourPicker
@@ -29,6 +29,3 @@ class RandomColourPicker(ColourPicker):
             self._history[key] = colour
 
         return self._colours[self._history[key]]
-
-    def set(self, key: Hashable, value: Iterable[str]) -> None:
-        self._history[key] = tuple(value)

@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Iterable, Tuple, Hashable
+from typing import Tuple, Hashable
 
 
 class ColourPicker(ABC):
@@ -12,7 +12,4 @@ class ColourPicker(ABC):
         the first being the colour of the node background and the second the colour of the node border & arrows
         """
 
-        raise NotImplementedError
-
-    def set(self, key: Hashable, value: Iterable[str]) -> None:
         raise NotImplementedError
