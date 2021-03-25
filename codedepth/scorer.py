@@ -113,8 +113,8 @@ class Scorer:
         layer_score = 0
         if file_path not in self._imports:
             self._imports[file_path] = set()
-            if file_path not in self._exports:
-                self._exports[file_path] = set()
+        if file_path not in self._exports:
+            self._exports[file_path] = set()
 
         for import_target in import_targets:
             do_increment_layer = self.is_valid_file(import_target)  # Filtered files do not increase layer
