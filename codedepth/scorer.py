@@ -5,9 +5,9 @@ from matplotlib import pyplot
 from os import path, walk
 from sys import setrecursionlimit
 from string import ascii_uppercase
-from typing import Iterable, Callable, Dict, Set, Sequence
+from typing import Iterable, Callable, Dict, Set, Sequence, FrozenSet, Type
 
-from .parsers import PyParser, LuaParser
+from .parsers import Parser, PyParser, LuaParser
 from .colourpickers import RandomColourPicker
 from .constants import Errors
 
@@ -22,7 +22,7 @@ class Scorer:
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
         self._filters = set(filters)
 
-        self._import_parsers = (PyParser, LuaParser)
+        self._import_parsers = frozenset((PyParser, LuaParser))
         if default_filters:
             for parser in self._import_parsers:
                 for func in parser.filters:
@@ -40,6 +40,10 @@ class Scorer:
     @property
     def dir_path(self) -> str:
         return self._dir_path
+
+    @property
+    def import_parsers(self) -> FrozenSet[Type[Parser]]:
+        return frozenset(self._import_parsers)
 
     @property
     def layer_scores(self) -> Dict[str, int]:
