@@ -29,6 +29,7 @@ class Scorer:
 
         self._layer_scores = {}
         self._abstraction_scores = {}
+
         self._imports = {}
         self._exports = {}
 
@@ -112,6 +113,8 @@ class Scorer:
         layer_score = 0
         if file_path not in self._imports:
             self._imports[file_path] = set()
+            if file_path not in self._exports:
+                self._exports[file_path] = set()
 
         for import_target in import_targets:
             do_increment_layer = self.is_valid_file(import_target)  # Filtered files do not increase layer
@@ -157,7 +160,7 @@ class Scorer:
         draw(graph, with_labels=True, node_size=node_size, alpha=alpha, arrows=True)
         pyplot.show()
 
-    def plot_ranked(self, reversed_score_positioning: bool = True) -> None:
+    def plot_ranked(self, reversed_score_positioning: bool = False) -> None:
         """
         Plots a ranked dependency graph using Graphviz
         (requires graphviz package, and also for Graphviz to be installed)
