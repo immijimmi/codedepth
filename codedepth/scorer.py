@@ -5,9 +5,10 @@ from matplotlib import pyplot
 from os import path, walk
 from sys import setrecursionlimit
 from string import ascii_uppercase
-from typing import Iterable, Callable, Tuple, Any, Dict, Set, Sequence
+from typing import Iterable, Callable, Dict, Set, Sequence
 
 from .parsers import PyParser, LuaParser
+from .colourpickers import RandomColourPicker
 from .constants import Errors
 
 
@@ -15,17 +16,18 @@ class Scorer:
     def __init__(
             self, dir_path: str,
             filters: Iterable[Callable[[str], bool]] = (),
-            use_parser_filters: bool = True
+            default_filters: bool = False
     ):
         self._dir_path = path.abspath(dir_path)
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
         self._filters = set(filters)
 
         self._import_parsers = (PyParser, LuaParser)
-        if use_parser_filters:
+        if default_filters:
             for parser in self._import_parsers:
                 for func in parser.filters:
                     self._filters.add(func)
+        self._colour_picker = RandomColourPicker
 
         self._layer_scores = {}
         self._abstraction_scores = {}
@@ -160,7 +162,7 @@ class Scorer:
         draw(graph, with_labels=True, node_size=node_size, alpha=alpha, arrows=True)
         pyplot.show()
 
-    def plot_ranked(self, reversed_score_positioning: bool = False) -> None:
+    def plot_ranked(self, reversed_score_positioning: bool = True) -> None:
         """
         Plots a ranked dependency graph using Graphviz
         (requires graphviz package, and also for Graphviz to be installed)
