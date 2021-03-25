@@ -27,7 +27,7 @@ class Scorer:
             for parser in self._import_parsers:
                 for func in parser.filters:
                     self._filters.add(func)
-        self._colour_picker = RandomColourPicker
+        self._colour_picker = RandomColourPicker(self)
 
         self._layer_scores = {}
         self._abstraction_scores = {}
@@ -202,9 +202,7 @@ class Scorer:
             parent_node_id = get_node_id(parent_index + 1)
             node_ids[parent] = parent_node_id
 
-            node_colour, node_border_colour = self._colour_picker.get(
-                parent, self._imports[parent], self._exports[parent]
-            )
+            node_colour, node_border_colour = self._colour_picker.get(parent)
             subgraph.node(
                 parent_node_id, self.get_label(parent),
                 color=node_border_colour, style="filled", fillcolor=node_colour
@@ -217,7 +215,7 @@ class Scorer:
             for child in children:
                 child_node_id = node_ids[child]
 
-                edge_colour = self._colour_picker.get(child, self._imports[child], self._exports[child])[1]
+                edge_colour = self._colour_picker.get(child)[1]
                 graph.edge(child_node_id, parent_node_id, color=edge_colour)
 
         for subgraph in subgraphs.values():

@@ -1,4 +1,4 @@
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Hashable
 from random import choice
 
 from .colourpicker import ColourPicker
@@ -6,23 +6,29 @@ from .constants import Constants
 
 
 class RandomColourPicker(ColourPicker):
-    colours = Constants.colours["pastel"]
-    history = {}
+    def __init__(self, scorer: "Scorer"):
+        super().__init__(scorer)
 
-    @classmethod
-    def get(cls, file_path: str, dependency_paths: Iterable[str], dependent_paths: Iterable[str]) -> Tuple[str, str]:
-        if file_path not in cls.history:
-            used_colours = {colour: 0 for colour in cls.colours}
-            for connection_list in (dependency_paths, dependent_paths):
+        self._colours = Constants.colours["pastel"]
+        self._history = {}
+
+    def get(self, key: Hashable) -> Tuple[str, str]:
+        if key not in self._history:  # Key will be assumed to be a file path if a colour is not generated for it yet
+            used_colours = {colour: 0 for colour in self._colours}
+
+            for connection_list in (self._scorer.imports[key], self._scorer.exports[key]):
                 for connection_path in connection_list:
-                    if connection_path in cls.history:
-                        connection_colour = cls.history[connection_path]
+                    if connection_path in self._history:
+                        connection_colour = self._history[connection_path]
                         used_colours[connection_colour] += 1
 
             min_usage = min(used_colours.values())
             min_used_colours = tuple(filter(lambda colour: used_colours[colour] == min_usage, used_colours))
 
             colour = choice(min_used_colours)
-            cls.history[file_path] = colour
+            self._history[key] = colour
 
-        return cls.colours[cls.history[file_path]]
+        return self._colours[self._history[key]]
+
+    def set(self, key: Hashable, value: Iterable[str]) -> None:
+        self._history[key] = tuple(value)
