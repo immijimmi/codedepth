@@ -1,0 +1,336 @@
+digraph {
+	C -> B [color="#005999"]
+	A -> B [color="#4C4C4C"]
+	AO -> D [color="#4C4C4C"]
+	P -> D [color="#4C4C4C"]
+	AR -> D [color="#4C4C4C"]
+	E -> D [color="#4C4C4C"]
+	AT -> D [color="#4C4C4C"]
+	M -> E [color="#005999"]
+	G -> E [color="#005999"]
+	H -> E [color="#005999"]
+	J -> E [color="#005999"]
+	K -> E [color="#005999"]
+	F -> E [color="#005999"]
+	L -> E [color="#005999"]
+	N -> E [color="#005999"]
+	O -> E [color="#005999"]
+	C -> E [color="#005999"]
+	I -> E [color="#005999"]
+	J -> K [color="#005999"]
+	S -> P [color="#990000"]
+	Q -> P [color="#660099"]
+	AE -> P [color="#990000"]
+	AF -> P [color="#990000"]
+	R -> P [color="#990000"]
+	AM -> P [color="#660099"]
+	R -> Q [color="#990000"]
+	AK -> Q [color="#993D00"]
+	B -> Q [color="#4C4C4C"]
+	S -> R [color="#990000"]
+	AI -> R [color="#997F00"]
+	AE -> R [color="#990000"]
+	T -> S [color="#005999"]
+	U -> S [color="#993D00"]
+	B -> S [color="#4C4C4C"]
+	Y -> S [color="#2D9900"]
+	G -> U [color="#005999"]
+	AC -> U [color="#997F00"]
+	F -> U [color="#005999"]
+	Z -> U [color="#997F00"]
+	V -> U [color="#997F00"]
+	B -> U [color="#4C4C4C"]
+	AA -> U [color="#997F00"]
+	AD -> U [color="#997F00"]
+	X -> U [color="#4C4C4C"]
+	AB -> U [color="#005999"]
+	W -> V [color="#005999"]
+	M -> V [color="#005999"]
+	K -> V [color="#005999"]
+	L -> V [color="#005999"]
+	B -> V [color="#4C4C4C"]
+	X -> V [color="#4C4C4C"]
+	Y -> V [color="#2D9900"]
+	G -> W [color="#005999"]
+	B -> X [color="#4C4C4C"]
+	B -> Y [color="#4C4C4C"]
+	V -> Z [color="#997F00"]
+	B -> AA [color="#4C4C4C"]
+	Z -> AA [color="#997F00"]
+	Y -> AC [color="#2D9900"]
+	X -> AD [color="#4C4C4C"]
+	B -> AD [color="#4C4C4C"]
+	U -> AE [color="#993D00"]
+	AF -> AE [color="#990000"]
+	F -> AE [color="#005999"]
+	AA -> AE [color="#997F00"]
+	AH -> AF [color="#4C4C4C"]
+	T -> AF [color="#005999"]
+	AG -> AF [color="#005999"]
+	U -> AF [color="#993D00"]
+	H -> AF [color="#005999"]
+	F -> AF [color="#005999"]
+	Z -> AF [color="#997F00"]
+	B -> AF [color="#4C4C4C"]
+	AA -> AF [color="#997F00"]
+	AD -> AF [color="#997F00"]
+	AB -> AF [color="#005999"]
+	B -> AH [color="#4C4C4C"]
+	AJ -> AI [color="#4C4C4C"]
+	B -> AJ [color="#4C4C4C"]
+	T -> AK [color="#005999"]
+	AG -> AK [color="#005999"]
+	AL -> AK [color="#005999"]
+	B -> AK [color="#4C4C4C"]
+	AA -> AK [color="#997F00"]
+	X -> AK [color="#4C4C4C"]
+	R -> AM [color="#990000"]
+	AN -> AM [color="#990000"]
+	X -> AN [color="#4C4C4C"]
+	U -> AN [color="#993D00"]
+	W -> AO [color="#005999"]
+	AK -> AO [color="#993D00"]
+	U -> AO [color="#993D00"]
+	AQ -> AO [color="#990000"]
+	Z -> AO [color="#997F00"]
+	V -> AO [color="#997F00"]
+	AN -> AO [color="#990000"]
+	AP -> AO [color="#005999"]
+	AD -> AO [color="#997F00"]
+	AB -> AO [color="#005999"]
+	AA -> AO [color="#997F00"]
+	F -> AP [color="#005999"]
+	U -> AQ [color="#993D00"]
+	AA -> AQ [color="#997F00"]
+	AP -> AQ [color="#005999"]
+	T -> AR [color="#005999"]
+	AG -> AR [color="#005999"]
+	AC -> AR [color="#997F00"]
+	AS -> AR [color="#005999"]
+	AL -> AR [color="#005999"]
+	AI -> AR [color="#997F00"]
+	Y -> AR [color="#2D9900"]
+	{
+		rank=same
+		A [label="config.lua
+□□□□□□□□□□
+□□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+		C [label="data ▼
+normalise_keys.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+	}
+	{
+		rank=same
+		B [label="constants.lua
+■□□□□□□□□□
+□□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+		G [label="data ▼
+concat_tables.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		J [label="data ▼
+split_string.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+	}
+	{
+		rank=same
+		D [label="init.lua
+■■■■■■■■■■
+■■" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+		AU [label="startup.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+	}
+	{
+		rank=same
+		E [label="data ▼
+init.lua
+■■□□□□□□□□
+□□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+		P [label="management ▼
+init.lua
+■■■■■■■■■■
+■□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+		AO [label="mining ▼
+init.lua
+■■■■■■■■□□
+□□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+		AR [label="turtle ▼
+init.lua
+■■■■□□□□□□
+□□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+		AT [label="building ▼
+init.lua
+□□□□□□□□□□
+□□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+	}
+	{
+		rank=same
+		F [label="data ▼
+concat_lists.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		AA [label="mining ▼
+execute_reversed_moves.lua
+■■■■■□□□□□
+□□" color="#997F00" fillcolor="#FFF6CC" style=filled]
+		AB [label="mining ▼
+try_refuel.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		AC [label="turtle ▼
+inspect_direction.lua
+■■■□□□□□□□
+□□" color="#997F00" fillcolor="#FFF6CC" style=filled]
+		AD [label="mining ▼
+fuel_required.lua
+■■■□□□□□□□
+□□" color="#997F00" fillcolor="#FFF6CC" style=filled]
+	}
+	{
+		rank=same
+		H [label="data ▼
+merged_item_counts.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		T [label="turtle ▼
+find_item.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		U [label="mining ▼
+try_excavate.lua
+■■■■■■□□□□
+□□" color="#993D00" fillcolor="#FFE0CC" style=filled]
+		AG [label="turtle ▼
+has_items.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		AH [label="management ▼
+constants.lua
+■■□□□□□□□□
+□□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+	}
+	{
+		rank=same
+		I [label="data ▼
+filter.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		N [label="data ▼
+has_matching_properties.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		O [label="data ▼
+is_list.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		Q [label="management ▼
+deploy_lava_pool_refuels.lua
+■■■■■■■■■■
+□□" color="#660099" fillcolor="#EECCFF" style=filled]
+		AM [label="management ▼
+deploy_strip_miners.lua
+■■■■■■■■■■
+□□" color="#660099" fillcolor="#EECCFF" style=filled]
+		AQ [label="mining ▼
+quarry.lua
+■■■■■■■□□□
+□□" color="#990000" fillcolor="#FFCCCC" style=filled]
+		AS [label="turtle ▼
+inspect_all.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+	}
+	{
+		rank=same
+		K [label="data ▼
+csv_to_list.lua
+■□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		L [label="data ▼
+append_to_csv.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		M [label="data ▼
+list_to_csv.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		W [label="mining ▼
+try_clean_inventory.lua
+■□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+		X [label="mining ▼
+constants.lua
+■■□□□□□□□□
+□□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+		Y [label="turtle ▼
+turn_to.lua
+■■□□□□□□□□
+□□" color="#2D9900" fillcolor="#DBFFCC" style=filled]
+	}
+	{
+		rank=same
+		R [label="management ▼
+handle_deployment.lua
+■■■■■■■■■□
+□□" color="#990000" fillcolor="#FFCCCC" style=filled]
+		AK [label="mining ▼
+lava_pool_refuel.lua
+■■■■■■□□□□
+□□" color="#993D00" fillcolor="#FFE0CC" style=filled]
+		AN [label="mining ▼
+try_strip_mine.lua
+■■■■■■■□□□
+□□" color="#990000" fillcolor="#FFCCCC" style=filled]
+		AP [label="mining ▼
+filled_square_moves.lua
+■□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+	}
+	{
+		rank=same
+		S [label="management ▼
+set_startup_replace.lua
+■■■■■■■□□□
+□□" color="#990000" fillcolor="#FFCCCC" style=filled]
+		AE [label="management ▼
+deploy_turtles.lua
+■■■■■■■■□□
+□□" color="#990000" fillcolor="#FFCCCC" style=filled]
+		AI [label="turtle ▼
+orient.lua
+■■■□□□□□□□
+□□" color="#997F00" fillcolor="#FFF6CC" style=filled]
+		AL [label="turtle ▼
+has_free_slots.lua
+□□□□□□□□□□
+□□" color="#005999" fillcolor="#CCE9FF" style=filled]
+	}
+	{
+		rank=same
+		V [label="mining ▼
+try_move.lua
+■■■□□□□□□□
+□□" color="#997F00" fillcolor="#FFF6CC" style=filled]
+	}
+	{
+		rank=same
+		Z [label="mining ▼
+execute_moves.lua
+■■■■□□□□□□
+□□" color="#997F00" fillcolor="#FFF6CC" style=filled]
+	}
+	{
+		rank=same
+		AF [label="management ▼
+deploy_turtle.lua
+■■■■■■■□□□
+□□" color="#990000" fillcolor="#FFCCCC" style=filled]
+		AJ [label="turtle ▼
+constants.lua
+■■□□□□□□□□
+□□" color="#4C4C4C" fillcolor="#E5E5E5" style=filled]
+	}
+}

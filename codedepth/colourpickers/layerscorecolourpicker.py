@@ -26,7 +26,7 @@ class LayerScoreColourPicker(ColourPicker):
             else:
                 file_layer_score = self._scorer.layer_scores[file_path]
                 score_percentile = file_layer_score / max(self._scorer.layer_scores.values())
-                colour_index = round(score_percentile * len(self._colour_scale))
+                colour_index = round(score_percentile * (len(self._colour_scale)-1))
 
                 self._history[file_path] = self._colour_scale[colour_index]
 
