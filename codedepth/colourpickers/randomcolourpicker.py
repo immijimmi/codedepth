@@ -12,11 +12,11 @@ class RandomColourPicker(ColourPicker):
         self._colours = Constants.colours["pastel"]
         self._history = {}
 
-    def get(self, key: Hashable) -> Tuple[str, str]:
-        if key not in self._history:  # Key will be assumed to be a file path if a colour is not generated for it yet
+    def get(self, file_path: str) -> Tuple[str, str]:
+        if file_path not in self._history:
             used_colours = {colour: 0 for colour in self._colours}
 
-            for connection_list in (self._scorer.imports[key], self._scorer.exports[key]):
+            for connection_list in (self._scorer.imports[file_path], self._scorer.exports[file_path]):
                 for connection_path in connection_list:
                     if connection_path in self._history:
                         connection_colour = self._history[connection_path]
@@ -26,6 +26,6 @@ class RandomColourPicker(ColourPicker):
             min_used_colours = tuple(filter(lambda colour: used_colours[colour] == min_usage, used_colours))
 
             colour = choice(min_used_colours)
-            self._history[key] = colour
+            self._history[file_path] = colour
 
-        return self._colours[self._history[key]]
+        return self._colours[self._history[file_path]]
