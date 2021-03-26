@@ -1,12 +1,11 @@
 from typing import Tuple
-from random import choice
 
 from .colourpicker import ColourPicker
 from .constants import Constants
 
 
 class LayerScoreColourPicker(ColourPicker):
-    rank_colours = ("blue", "green", "yellow", "orange", "red", "purple")
+    _colour_scale = ("blue", "green", "yellow", "orange", "red", "purple")
 
     def __init__(self, scorer: "Scorer"):
         super().__init__(scorer)
@@ -26,7 +25,9 @@ class LayerScoreColourPicker(ColourPicker):
 
             else:
                 file_layer_score = self._scorer.layer_scores[file_path]
+                score_percentile = file_layer_score / max(self._scorer.layer_scores.values())
+                colour_index = round(score_percentile * len(self._colour_scale))
 
-                self._history[file_path] = self.rank_colours[file_layer_score % len(self.rank_colours)]
+                self._history[file_path] = self._colour_scale[colour_index]
 
         return self._colours[self._history[file_path]]
