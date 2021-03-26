@@ -29,7 +29,9 @@ class Scorer:
                     self._filters.add(func)
         self._colour_picker = RandomColourPicker(self)
 
+        # Layer score indicates how many layers of imports a file relies on
         self._layer_scores = {}
+        # Abstraction score indicates how many layers away from the nearest top-level file a file is
         self._abstraction_scores = {}
 
         self._imports = {}
