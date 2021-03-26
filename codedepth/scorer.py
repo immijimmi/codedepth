@@ -10,6 +10,7 @@ from typing import Iterable, Callable, Dict, Set, Sequence, FrozenSet, Type
 from .parsers import *
 from .colourpickers import *
 from .constants import Errors
+from .config import Config
 
 
 class Scorer:
@@ -234,7 +235,7 @@ class Scorer:
             node_colour, node_border_colour = self._colour_picker.get(parent)
             subgraph.node(
                 parent_node_id, self.get_label(parent),
-                color=node_border_colour, style="filled", fillcolor=node_colour
+                color=node_border_colour, style="filled", fillcolor=node_colour, **Config.ranked_styles["node"]
             )
 
         for parent_index, parent in enumerate(connections_working):
@@ -245,7 +246,7 @@ class Scorer:
                 child_node_id = node_ids[child]
 
                 edge_colour = self._colour_picker.get(child)[1]
-                graph.edge(child_node_id, parent_node_id, color=edge_colour)
+                graph.edge(child_node_id, parent_node_id, color=edge_colour, **Config.ranked_styles["edge"])
 
         for subgraph in subgraphs.values():
             graph.subgraph(subgraph)
@@ -258,7 +259,7 @@ class Scorer:
         """
 
         result = file_path.replace(self._dir_path+"\\", "")
-        result = result.replace("\\", " ▼\n")
+        result = result.replace("\\", "▼\n")
 
         if scorebar_length > 0:  # 0 or less will not generate a scorebar at all
             file_layer = self._layer_scores[file_path]
