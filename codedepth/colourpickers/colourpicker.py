@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Tuple, Hashable
+from typing import Tuple
 
 
 class ColourPicker(ABC):

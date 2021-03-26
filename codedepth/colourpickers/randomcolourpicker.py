@@ -1,4 +1,4 @@
-from typing import Tuple, Hashable
+from typing import Tuple
 from random import choice
 
 from .colourpicker import ColourPicker
