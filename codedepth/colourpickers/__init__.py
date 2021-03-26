@@ -1,1 +1,2 @@
 from .randomcolourpicker import RandomColourPicker
+from .layerscorecolourpicker import LayerScoreColourPicker

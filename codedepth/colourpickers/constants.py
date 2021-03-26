@@ -9,6 +9,6 @@ class Constants:
             "purple": ("#EECCFF", "#660099"),
         },
         "greyscale": {
-            "grey": ("#CCCCCC", "#333333")
+            "grey": ("#E5E5E5", "#4C4C4C")
         },
     }

@@ -7,8 +7,8 @@ from sys import setrecursionlimit
 from string import ascii_uppercase
 from typing import Iterable, Callable, Dict, Set, Sequence, FrozenSet, Type
 
-from .parsers import Parser, PyParser, LuaParser
-from .colourpickers import RandomColourPicker
+from .parsers import *
+from .colourpickers import *
 from .constants import Errors
 
 
@@ -24,10 +24,10 @@ class Scorer:
 
         self._import_parsers = frozenset((PyParser, LuaParser))
         if default_filters:
-            for parser in self._import_parsers:
-                for func in parser.filters:
+            for parser_cls in self._import_parsers:
+                for func in parser_cls.filters:
                     self._filters.add(func)
-        self._colour_picker = RandomColourPicker(self)
+        self._colour_picker = LayerScoreColourPicker(self)
 
         # Layer score indicates how many layers of imports a file relies on
         self._layer_scores = {}
@@ -121,7 +121,7 @@ class Scorer:
         valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._import_parsers))
         if not valid_parsers:
             raise Errors.NoValidParserError("unable to parse provided file")
-        parser = valid_parsers[0]
+        parser_cls = valid_parsers[0]
 
         try:
             with open(file_path) as file:
@@ -129,7 +129,7 @@ class Scorer:
         except FileNotFoundError:  # Primarily used to weed out builtins
             raise Errors.ExternalFileError("the file must be located in the specified directory")
 
-        import_targets = parser.parse(contents, path.dirname(file_path), self._dir_path)
+        import_targets = parser_cls.parse(contents, path.dirname(file_path), self._dir_path)
 
         layer_score = 0
         if file_path not in self._imports:
