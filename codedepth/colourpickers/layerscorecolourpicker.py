@@ -14,7 +14,7 @@ class LayerScoreColourPicker(ColourPicker):
         self._history = {}
 
         self._parser_filters = set()
-        for parser in self._scorer.import_parsers:
+        for parser in self._scorer.parsers:
             for func in parser.filters:
                 self._parser_filters.add(func)
 

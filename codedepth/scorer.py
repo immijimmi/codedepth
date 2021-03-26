@@ -15,19 +15,25 @@ from .constants import Errors
 class Scorer:
     def __init__(
             self, dir_path: str,
-            filters: Iterable[Callable[[str], bool]] = (),
-            default_filters: bool = False
+            colour_picker: Type[ColourPicker] = LayerScoreColourPicker,
+            custom_parsers: Iterable[Type[Parser]] = (),
+            custom_filters: Iterable[Callable[[str], bool]] = (),
+            use_default_filters: bool = False
     ):
         self._dir_path = path.abspath(dir_path)
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
-        self._filters = set(filters)
+        self._filters = set(custom_filters)
+        self._parsers = {PyParser, LuaParser}
 
-        self._import_parsers = frozenset((PyParser, LuaParser))
-        if default_filters:
-            for parser_cls in self._import_parsers:
+        for parser_cls in custom_parsers:
+            self._parsers.add(parser_cls)
+
+        if use_default_filters:
+            for parser_cls in self._parsers:
                 for func in parser_cls.filters:
                     self._filters.add(func)
-        self._colour_picker = LayerScoreColourPicker(self)
+
+        self._colour_picker = colour_picker(self)
 
         # Layer score indicates how many layers of imports a file relies on
         self._layer_scores = {}
@@ -44,8 +50,12 @@ class Scorer:
         return self._dir_path
 
     @property
-    def import_parsers(self) -> FrozenSet[Type[Parser]]:
-        return frozenset(self._import_parsers)
+    def parsers(self) -> FrozenSet[Type[Parser]]:
+        return frozenset(self._parsers)
+
+    @property
+    def filters(self) -> FrozenSet[Callable[[str], bool]]:
+        return frozenset(self._filters)
 
     @property
     def layer_scores(self) -> Dict[str, int]:
@@ -118,7 +128,7 @@ class Scorer:
         if file_path in self._layer_scores:
             return self._layer_scores[file_path]
 
-        valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._import_parsers))
+        valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._parsers))
         if not valid_parsers:
             raise Errors.NoValidParserError("unable to parse provided file")
         parser_cls = valid_parsers[0]
