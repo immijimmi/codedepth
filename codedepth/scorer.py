@@ -49,6 +49,10 @@ class Scorer:
 
     @property
     def layer_scores(self) -> Dict[str, int]:
+        """
+        Returns data with filtered files removed
+        """
+
         result = {}
 
         for key, value in self._layer_scores.items():
@@ -60,6 +64,7 @@ class Scorer:
     @property
     def abstraction_scores(self) -> Dict[str, int]:
         """
+        Returns data with filtered files removed.
         Unlike with layer scores, abstraction scores cannot be calculated with minimal overhead when already calculating
         connections in parse(). Therefore, it is calculated JIT in this property
         """
@@ -77,10 +82,18 @@ class Scorer:
 
     @property
     def imports(self) -> Dict[str, Set[str]]:
+        """
+        Returns data with filtered files removed
+        """
+
         return self._filtered_connections(self._imports)
 
     @property
     def exports(self) -> Dict[str, Set[str]]:
+        """
+        Returns data with filtered files removed
+        """
+
         return self._filtered_connections(self._exports)
 
     def parse_all(self) -> Dict[str, int]:
