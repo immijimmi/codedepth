@@ -16,7 +16,9 @@ class LuaParser(Parser):
         ".lua"
     )  # TODO: Determine correct ordering to match Lua's
 
-    _pattern = compile(r"require[ \t]*\(\s*(\"|\')((.|\s)*?)\1\s*\)")
+    _patterns = (
+        compile(r"require[ \t]*\(\s*(\"|\')((.|\s)*?)\1\s*\)"),
+    )
 
     @staticmethod
     def can_parse(file_path: str) -> bool:
@@ -24,9 +26,10 @@ class LuaParser(Parser):
 
     @staticmethod
     def parse(file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:
-        for match in LuaParser._pattern.findall(file_contents):
-            import_node = match[1]
+        for pattern in LuaParser._patterns:
+            for match in pattern.findall(file_contents):
+                import_node = match[1]
 
-            target_path = LuaParser._get_import_target(working_dir, import_node)
-            if target_path:
-                yield target_path
+                target_path = LuaParser._get_import_target(working_dir, import_node)
+                if target_path:
+                    yield target_path
