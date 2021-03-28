@@ -16,7 +16,7 @@ class LuaParser(Parser):
         ".lua"
     )  # TODO: Determine correct ordering to match Lua's
 
-    _pattern = compile(r"require\((\"|\')((.|\s)*?)\1\)")
+    _pattern = compile(r"require[ \t]*\(\s*(\"|\')((.|\s)*?)\1\s*\)")
 
     @staticmethod
     def can_parse(file_path: str) -> bool:
