@@ -131,3 +131,6 @@ dmypy.json
 .vscode
 .idea
 to-do.txt
+
+Digraph.gv
+Digraph.gv.pdf
