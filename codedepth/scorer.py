@@ -5,7 +5,7 @@ from matplotlib import pyplot
 from os import path, walk
 from sys import setrecursionlimit
 from string import ascii_uppercase
-from typing import Iterable, Callable, Dict, Set, Sequence, FrozenSet, Type
+from typing import Iterable, Callable, Dict, Set, Sequence, FrozenSet, Type, Optional
 
 from .parsers import *
 from .colourpickers import *
@@ -17,6 +17,7 @@ class Scorer:
     def __init__(
             self, dir_path: str,
             colour_picker: Type[ColourPicker] = LayerScoreColourPicker,
+            custom_labeller: Optional[Callable[["Scorer", str], Optional[str]]] = None,
             custom_parsers: Iterable[Type[Parser]] = (),
             custom_filters: Iterable[Callable[[str], bool]] = (),
             use_default_filters: bool = False
@@ -25,6 +26,7 @@ class Scorer:
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
         self._filters = set(custom_filters)
         self._parsers = {PyParser, LuaParser}
+        self._custom_labeller = custom_labeller or (lambda scorer, file_path: None)
 
         for parser_cls in custom_parsers:
             self._parsers.add(parser_cls)
@@ -258,8 +260,9 @@ class Scorer:
         Provides a concrete implementation for prettifying a file path into a label
         """
 
-        result = file_path.replace(self._dir_path+"\\", "")
-        result = result.replace("\\", "▼\n")
+        if (result := self._custom_labeller(self, file_path)) is None:
+            result = file_path.replace(self._dir_path + "\\", "")
+            result = result.replace("\\", "▼\n")
 
         if scorebar_length > 0:  # 0 or less will not generate a scorebar at all
             file_layer = self._layer_scores[file_path]
