@@ -18,7 +18,7 @@ setup(
     url="https://github.com/immijimmi/codedepth",
     download_url="",
     keywords=[
-        "abstraction", "level", "directory", "abstract", "import", "import"
+        "abstraction", "level", "directory", "abstract", "imports", "import"
     ],
     install_requires=[
         "graphviz>=0.16", "networkx>=2.5", "matplotlib>=3.3.4"
