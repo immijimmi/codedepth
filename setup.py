@@ -16,7 +16,7 @@ setup(
     author="immijimmi",
     author_email="imranhamid99@msn.com",
     url="https://github.com/immijimmi/codedepth",
-    download_url="",
+    download_url="https://github.com/immijimmi/codedepth/archive/refs/tags/v0.1.0.tar.gz",
     keywords=[
         "abstraction", "level", "directory", "abstract", "imports", "import"
     ],
