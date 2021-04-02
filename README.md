@@ -4,12 +4,7 @@
 
 ## Dependencies
 
-You will need the following packages:
-- `pip install networkx`
-- `pip intall matplotlib`
-- `pip install graphviz`
-
-You will also need Graphviz installed as an application - installation instructions can be found at https://graphviz.org/download/
+You will need Graphviz installed as an application - installation instructions can be found at https://graphviz.org/download/
 
 ## Quickstart
 
