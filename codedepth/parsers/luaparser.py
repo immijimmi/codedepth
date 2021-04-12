@@ -1,4 +1,5 @@
 from re import compile
+from typing import Generator
 
 from .regexparser import RegexParser
 
@@ -22,3 +23,11 @@ class LuaParser(RegexParser):
     @classmethod
     def can_parse(cls, file_path: str) -> bool:
         return file_path[-4:] == ".lua"
+
+    @classmethod
+    def parse(cls, file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:
+        for import_node in cls._get_import_nodes(file_contents, file_dir, working_dir):
+            target_path = cls._get_import_target(working_dir, import_node)
+
+            if target_path:
+                yield target_path
