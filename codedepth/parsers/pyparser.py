@@ -15,7 +15,6 @@ class PyParser(Parser):
 
     _node_endings = (
         r"\__init__.py",
-        r"\__init__.pyw",
         ".py",
         ".pyw"
     )
