@@ -1,10 +1,9 @@
-from typing import Generator
 from re import compile
 
-from .parser import Parser
+from .regexparser import RegexParser
 
 
-class LuaParser(Parser):
+class LuaParser(RegexParser):
     filters = frozenset((
         lambda file_path: file_path[-9:] != r"\init.lua",
         lambda file_path: file_path[-14:] != r"\constants.lua",
@@ -23,13 +22,3 @@ class LuaParser(Parser):
     @classmethod
     def can_parse(cls, file_path: str) -> bool:
         return file_path[-4:] == ".lua"
-
-    @classmethod
-    def parse(cls, file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:
-        for pattern in cls._patterns:
-            for match in pattern.findall(file_contents):
-                import_node = match[1]
-
-                target_path = cls._get_import_target(working_dir, import_node)
-                if target_path:
-                    yield target_path
