@@ -25,7 +25,7 @@ class Scorer:
         self._dir_path = path.abspath(dir_path)
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
         self._filters = set(custom_filters)
-        self._parsers = {PyParser, LuaParser}
+        self._parsers = {PyParser, LuaParser, JsParser}
         self._custom_labeller = custom_labeller or (lambda scorer, file_path: None)
 
         for parser_cls in custom_parsers:

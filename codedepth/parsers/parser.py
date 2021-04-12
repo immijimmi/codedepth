@@ -22,7 +22,7 @@ class Parser(ABC):
 
     @classmethod
     def _get_import_target(cls, import_node_starting_dir: str, import_node: str) -> Optional[str]:
-        working_target = import_node_starting_dir + "\\" + import_node.replace(".", "\\")
+        working_target = import_node_starting_dir + "\\" + import_node.replace(".", "\\").replace("/", "\\")
 
         for path_ending in cls._node_endings:
             result = working_target + path_ending
