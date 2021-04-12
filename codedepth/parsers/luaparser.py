@@ -20,16 +20,16 @@ class LuaParser(Parser):
         compile(r"require[ \t]*\(\s*(\"|\')((.|\s)*?)\1\s*\)"),
     )
 
-    @staticmethod
-    def can_parse(file_path: str) -> bool:
+    @classmethod
+    def can_parse(cls, file_path: str) -> bool:
         return file_path[-4:] == ".lua"
 
-    @staticmethod
-    def parse(file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:
-        for pattern in LuaParser._patterns:
+    @classmethod
+    def parse(cls, file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:
+        for pattern in cls._patterns:
             for match in pattern.findall(file_contents):
                 import_node = match[1]
 
-                target_path = LuaParser._get_import_target(working_dir, import_node)
+                target_path = cls._get_import_target(working_dir, import_node)
                 if target_path:
                     yield target_path

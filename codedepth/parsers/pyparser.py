@@ -19,18 +19,18 @@ class PyParser(Parser):
         ".pyw"
     )
 
-    @staticmethod
-    def can_parse(file_path: str) -> bool:
+    @classmethod
+    def can_parse(cls, file_path: str) -> bool:
         return file_path[-3:] == ".py" or file_path[-4:] == ".pyw"
 
-    @staticmethod
-    def parse(file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:
+    @classmethod
+    def parse(cls, file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:
         nodes = walk(parse(file_contents))
 
         for node in nodes:
             if isinstance(node, Import):
                 for name_node in node.names:
-                    target_path = PyParser._get_import_target(file_dir, name_node.name)
+                    target_path = cls._get_import_target(file_dir, name_node.name)
                     if target_path:
                         yield target_path
 
@@ -41,12 +41,12 @@ class PyParser(Parser):
                     for i in range(node.level-1):
                         offset_file_dir = ospath.dirname(offset_file_dir)  # Go up 1 directory
                 if node.module:
-                    target_path = PyParser._get_import_target(offset_file_dir, node.module)
+                    target_path = cls._get_import_target(offset_file_dir, node.module)
                     if target_path:
                         yield target_path
 
                 else:
                     for name_node in node.names:
-                        target_path = PyParser._get_import_target(offset_file_dir, name_node.name)
+                        target_path = cls._get_import_target(offset_file_dir, name_node.name)
                         if target_path:
                             yield target_path
