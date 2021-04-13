@@ -8,7 +8,7 @@ from .constants import Patterns
 
 class JsParser(RegexParser):
     filters = frozenset((
-        # ##### TODO
+        # TODO
     ))
 
     _node_endings = (
@@ -17,7 +17,7 @@ class JsParser(RegexParser):
         ".ts",
         ".tsx",
         ""
-    )  # TODO: Possibly missing entries. Determine correct ordering to match JS's
+    )  # TODO: Possibly missing entries, and need to determine correct ordering to match JS's
 
     _patterns = {
         **Patterns.require,
@@ -27,7 +27,9 @@ class JsParser(RegexParser):
 
     @classmethod
     def can_parse(cls, file_path: str) -> bool:
-        return file_path[-3:] in (".js", ".ts") or file_path[-4:] in (".jsx", ".tsx")
+        result = file_path[-3:] in (".js", ".ts") or file_path[-4:] in (".jsx", ".tsx")
+        result = result and "\\node_modules\\" not in file_path
+        return result
 
     @classmethod
     def parse(cls, file_contents: str, file_dir: str, working_dir: str) -> Generator[str, None, None]:

@@ -14,6 +14,12 @@ class Parser(ABC):
 
     @classmethod
     def can_parse(cls, file_path: str) -> bool:
+        """
+        Indicates whether the file is supported by the parser class this is called on.
+        For any files that should never be considered local dependencies, this should return False
+        (for example, files inside a node_modules folder for JS projects)
+        """
+
         raise NotImplementedError
 
     @classmethod

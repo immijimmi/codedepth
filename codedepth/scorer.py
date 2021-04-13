@@ -152,7 +152,7 @@ class Scorer:
 
         # Reading the file's contents
         try:
-            with open(file_path) as file:
+            with open(file_path, encoding="utf-8") as file:
                 contents = file.read()
         except FileNotFoundError:  # Primarily used to weed out builtins
             raise Errors.ExternalFileError("the file must be located in the specified directory")

@@ -1,5 +1,6 @@
 from sys import argv
 from os import getcwd
+from logging import basicConfig, info, INFO
 
 from .__init__ import *
 
@@ -13,6 +14,13 @@ if len(argv) != expected_args:
     else:
         argv.append(getcwd())
 
+basicConfig(level=INFO)
+
+info("Initializing...")
 s = Scorer(argv[1])
+
+info("Parsing files...")
 s.parse_all()
+
+info("Plotting ranked digraph...")
 s.plot_ranked()
