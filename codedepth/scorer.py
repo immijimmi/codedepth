@@ -7,6 +7,7 @@ from sys import setrecursionlimit
 from string import ascii_uppercase
 from typing import Iterable, Callable, Dict, Set, Sequence, FrozenSet, Type, Optional
 from contextlib import contextmanager
+from logging import warning
 
 from .parsers import *
 from .colourpickers import *
@@ -192,6 +193,8 @@ class Scorer:
 
         # Circular dependencies from further down the stack are handled here
         if self._layer_scores.get(file_path, None) == -1:
+            warning(f"A circular dependency was detected in the following file: {file_path}")
+
             # Remove any listed imports for the flagged file, in order to break the dependency chain
             self._imports[file_path] = set()
             for import_target in import_targets:
