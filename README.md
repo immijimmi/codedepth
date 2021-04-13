@@ -11,8 +11,10 @@ You will need Graphviz installed as an application - installation instructions c
 From the command line (this will use default parameters and output a ranked directional graph as a PDF):
 
 ```
-C:\Repos\codedepth> python -m codedepth <path of the target directory>
+> python -m codedepth <path of the target directory>
 ```
+The PDF will be generated in the working directory.
+If `<path of the target directory>` is omitted, the working directory will be used as the target.
 
 In a python script:
 
