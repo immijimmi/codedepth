@@ -3,6 +3,7 @@ from re import compile
 from os import path as ospath
 
 from .regexparser import RegexParser
+from .constants import Patterns
 
 
 class JsParser(RegexParser):
@@ -19,7 +20,7 @@ class JsParser(RegexParser):
     )  # TODO: Possibly missing entries. Determine correct ordering to match JS's
 
     _patterns = {
-        compile(r"require[ \t]*\(\s*(\"|\')((.|\s)*?)\1\s*\)"): 1,  # `require('module')`
+        **Patterns.require,
         compile(r"import [\w\{\}\s]*? from (\"|\')((.|\s)*?)\1"): 1,  # `import _ from 'module'`
         compile(r"import (\"|\')((.|\s)*?)\1"): 1,  # `import 'module'`
     }  # TODO: Add all styles of import

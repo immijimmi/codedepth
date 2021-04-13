@@ -6,11 +6,22 @@ from os import path, walk
 from sys import setrecursionlimit
 from string import ascii_uppercase
 from typing import Iterable, Callable, Dict, Set, Sequence, FrozenSet, Type, Optional
+from contextlib import contextmanager
 
 from .parsers import *
 from .colourpickers import *
 from .constants import Errors
 from .config import Config
+
+
+@contextmanager
+def set_value(target_set, value):
+    if value in target_set:
+        raise ValueError("value already exists in set")
+
+    target_set.add(value)
+    yield
+    target_set.remove(value)
 
 
 class Scorer:
@@ -45,6 +56,8 @@ class Scorer:
 
         self._imports = {}
         self._exports = {}
+
+        self._parse_stack = set()
 
         setrecursionlimit(10000)
 
@@ -125,50 +138,72 @@ class Scorer:
     def parse(self, file_path: str) -> int:
         file_path = path.abspath(file_path)
 
-        # Preliminary checks
+        # Preliminary checks to filter external files out and see if this file's score is already calculated
         if file_path[:len(self._dir_path)] != self._dir_path:
             raise Errors.ExternalFileError("the file must be located in the specified directory")
         if file_path in self._layer_scores:
             return self._layer_scores[file_path]
 
+        # Looking for a parser that can parse this file
         valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._parsers))
         if not valid_parsers:
             raise Errors.NoValidParserError("unable to parse provided file")
         parser_cls = valid_parsers[0]
 
+        # Reading the file's contents
         try:
             with open(file_path) as file:
                 contents = file.read()
         except FileNotFoundError:  # Primarily used to weed out builtins
             raise Errors.ExternalFileError("the file must be located in the specified directory")
 
-        import_targets = parser_cls.parse(contents, path.dirname(file_path), self._dir_path)
+        # This indicates whether the file is already being handled further up the stack
+        if file_path in self._parse_stack:
+            self._layer_scores[file_path] = -1  # Temporary, to indicate that a circular dependency exists
+            return 0
 
-        layer_score = 0
-        if file_path not in self._imports:
+        with set_value(self._parse_stack, file_path):
+            import_targets = tuple(parser_cls.parse(contents, path.dirname(file_path), self._dir_path))
+
+            # Setup for storing the results of parsing the file
+            layer_score = 0
+            if file_path not in self._imports:
+                self._imports[file_path] = set()
+            if file_path not in self._exports:
+                self._exports[file_path] = set()
+
+            # Parsing the file's imports to get their scores
+            for import_target in import_targets:
+                do_increment_layer = self.is_valid_file(import_target)  # Filtered files do not increase layer
+
+                try:
+                    dependency_layer = self.parse(import_target)
+                    layer_score = max(layer_score, dependency_layer+do_increment_layer)
+
+                    # If self.parse() did not raise exception, import_target is a valid file to add to connections dicts
+                    self._imports[file_path].add(import_target)
+                    if import_target not in self._exports:
+                        self._exports[import_target] = set()
+                    self._exports[import_target].add(file_path)
+                except Errors.ExternalFileError:
+                    pass
+                except Errors.NoValidParserError:
+                    pass
+
+        # Circular dependencies from further down the stack are handled here
+        if self._layer_scores.get(file_path, None) == -1:
+            # Remove any listed imports for the flagged file, in order to break the dependency chain
             self._imports[file_path] = set()
-        if file_path not in self._exports:
-            self._exports[file_path] = set()
+            for import_target in import_targets:
+                if file_path in self._exports[import_target]:
+                    self._exports[import_target].remove(file_path)
 
-        for import_target in import_targets:
-            do_increment_layer = self.is_valid_file(import_target)  # Filtered files do not increase layer
+            self._layer_scores[file_path] = 0
+            return 0
 
-            try:
-                dependency_layer = self.parse(import_target)
-                layer_score = max(layer_score, dependency_layer+do_increment_layer)
-
-                # If self.parse() did not raise an exception, import_target is a valid file to add to connections dicts
-                self._imports[file_path].add(import_target)
-                if import_target not in self._exports:
-                    self._exports[import_target] = set()
-                self._exports[import_target].add(file_path)
-            except Errors.ExternalFileError:
-                pass
-            except Errors.NoValidParserError:
-                pass
-
-        self._layer_scores[file_path] = layer_score
-        return layer_score
+        else:
+            self._layer_scores[file_path] = layer_score
+            return layer_score
 
     def is_valid_file(self, file_path: str) -> bool:
         return all(func(file_path) for func in self._filters)

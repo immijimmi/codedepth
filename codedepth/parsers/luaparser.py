@@ -2,6 +2,7 @@ from re import compile
 from typing import Generator
 
 from .regexparser import RegexParser
+from .constants import Patterns
 
 
 class LuaParser(RegexParser):
@@ -17,7 +18,7 @@ class LuaParser(RegexParser):
     )  # TODO: Determine correct ordering to match Lua's
 
     _patterns = {
-        compile(r"require[ \t]*\(\s*(\"|\')((.|\s)*?)\1\s*\)"): 1,
+        **Patterns.require
     }
 
     @classmethod
