@@ -7,7 +7,7 @@ from sys import setrecursionlimit
 from string import ascii_uppercase
 from typing import Iterable, Callable, Dict, Set, Sequence, FrozenSet, Type, Optional
 from contextlib import contextmanager
-from logging import warning
+from warnings import warn
 
 from .parsers import *
 from .colourpickers import *
@@ -193,7 +193,7 @@ class Scorer:
 
         # Circular dependencies from further down the stack are handled here
         if self._layer_scores.get(file_path, None) == -1:
-            warning(f"A circular dependency was detected in the following file: {file_path}")
+            warn(f"a circular dependency was detected in the following file: {file_path}")
 
             # Remove any listed imports for the flagged file, in order to break the dependency chain
             self._imports[file_path] = set()
@@ -216,6 +216,12 @@ class Scorer:
         Plots a circular dependency graph using Matplotlib
         (requires matplotlib package)
         """
+
+        warn(
+            "this method is no longer supported and will be removed in a future update. "
+            "Please use plot_ranked() instead",
+            DeprecationWarning
+        )
 
         connections = {}
 
