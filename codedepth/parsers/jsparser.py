@@ -37,22 +37,27 @@ class JsParser(RegexParser):
         for import_node in cls._get_import_nodes(file_contents, file_dir, working_dir):
             offset_file_dir = file_dir
 
-            while True:
-                latest_char = None
-                for char_index, char in enumerate(import_node):
-                    if char != ".":
-                        latest_char = char
-                        break
-                    elif char_index == 0:
-                        pass
-                    else:
-                        offset_file_dir = ospath.dirname(offset_file_dir)  # Go up 1 directory
+            directory_offset_total = 0
+            relative_chars = ""
+            previous_char = None
+            for char in import_node:
+                if char == ".":
+                    if previous_char == ".":
+                        directory_offset_total += 1
 
-                if latest_char != Constants.path_delimiter:
+                    relative_chars += char
+                elif char == Constants.path_delimiter:
+                    relative_chars += char
+                else:
                     break
 
-            import_node = import_node.lstrip(".")
-            import_node = import_node.lstrip("/").lstrip("\\")
+                previous_char = char
+
+            for i in range(directory_offset_total):
+                offset_file_dir = ospath.dirname(offset_file_dir)  # Go up 1 directory
+
+            import_node = import_node.lstrip(relative_chars)  # Remove relative characters from front of import node
+
             target_path = cls._get_import_target(offset_file_dir, import_node)
 
             if target_path:
