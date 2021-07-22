@@ -3,7 +3,8 @@ from re import compile
 from os import path as ospath
 
 from .regexparser import RegexParser
-from .constants import Patterns
+from .constants import Patterns, Constants as ParserConstants
+from ..constants import Constants
 
 
 class JsParser(RegexParser):
@@ -28,7 +29,7 @@ class JsParser(RegexParser):
     @classmethod
     def can_parse(cls, file_path: str) -> bool:
         result = file_path[-3:] in (".js", ".ts") or file_path[-4:] in (".jsx", ".tsx")
-        result = result and "\\node_modules\\" not in file_path
+        result = result and (ParserConstants.node_modules_fragment not in file_path)
         return result
 
     @classmethod
@@ -36,13 +37,19 @@ class JsParser(RegexParser):
         for import_node in cls._get_import_nodes(file_contents, file_dir, working_dir):
             offset_file_dir = file_dir
 
-            for char_index, char in enumerate(import_node):
-                if char != ".":
+            while True:
+                latest_char = None
+                for char_index, char in enumerate(import_node):
+                    if char != ".":
+                        latest_char = char
+                        break
+                    elif char_index == 0:
+                        pass
+                    else:
+                        offset_file_dir = ospath.dirname(offset_file_dir)  # Go up 1 directory
+
+                if latest_char != Constants.path_delimiter:
                     break
-                elif char_index == 0:
-                    pass
-                else:
-                    offset_file_dir = ospath.dirname(offset_file_dir)  # Go up 1 directory
 
             import_node = import_node.lstrip(".")
             import_node = import_node.lstrip("/").lstrip("\\")
