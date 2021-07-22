@@ -46,7 +46,7 @@ class JsParser(RegexParser):
                         directory_offset_total += 1
 
                     relative_chars += char
-                elif char == Constants.path_delimiter:
+                elif char in (Constants.path_delimiter, Constants.non_path_delimiter):
                     relative_chars += char
                 else:
                     break
