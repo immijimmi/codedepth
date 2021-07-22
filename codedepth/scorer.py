@@ -304,9 +304,10 @@ class Scorer:
         Provides a concrete implementation for prettifying a file path into a label
         """
 
+        delimiter = "▼\n"
         if (result := self._custom_labeller(self, file_path)) is None:
-            result = file_path.replace(self._dir_path + "\\", "")
-            result = result.replace("\\", "▼\n")
+            result = file_path.replace(self._dir_path + "\\", "").replace(self._dir_path + "/", "")
+            result = result.replace("\\", delimiter).replace("/", delimiter)
 
         if scorebar_length > 0:  # 0 or less will not generate a scorebar at all
             file_layer = self._layer_scores[file_path]
