@@ -11,7 +11,7 @@ from warnings import warn
 
 from .parsers import *
 from .colourpickers import *
-from .constants import Errors
+from .constants import Errors, Constants
 from .config import Config
 
 
@@ -304,10 +304,10 @@ class Scorer:
         Provides a concrete implementation for prettifying a file path into a label
         """
 
-        delimiter = "▼\n"
+        label_delimiter = "▼\n"
         if (result := self._custom_labeller(self, file_path)) is None:
-            result = file_path.replace(self._dir_path + "\\", "").replace(self._dir_path + "/", "")
-            result = result.replace("\\", delimiter).replace("/", delimiter)
+            result = file_path.replace(self._dir_path + Constants.path_delimiter, "")
+            result = result.replace(Constants.path_delimiter, label_delimiter)
 
         if scorebar_length > 0:  # 0 or less will not generate a scorebar at all
             file_layer = self._layer_scores[file_path]
