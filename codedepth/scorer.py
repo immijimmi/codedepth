@@ -213,7 +213,7 @@ class Scorer:
 
     def plot_circular(self, node_size: int = 12500, alpha: float = 0.35) -> None:
         """
-        Plots a circular dependency graph using Matplotlib
+        Plots a circular graph of dependencies using Matplotlib
         (requires matplotlib package)
         """
 
