@@ -22,7 +22,7 @@ class JsParser(RegexParser):
 
     _patterns = {
         **Patterns.require,
-        compile(r"import [\w\{\}\s]*? from (\"|\')((.|\s)*?)\1"): 1,  # `import _ from 'module'`
+        compile(r"import [\w\{\}\s,]*? from (\"|\')((.|\s)*?)\1"): 1,  # `import _ from 'module'`
         compile(r"import (\"|\')((.|\s)*?)\1"): 1,  # `import 'module'`
     }  # TODO: Add all styles of import
 
