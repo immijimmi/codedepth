@@ -2,6 +2,11 @@
 
 ###### Generates scores for how many layers of local imports/exports are in a file
 
+##### Supported Languages
+- Python 🟢
+- Lua 🟢
+- JavaScript 🟡 (Some styles of import statement may not be detected as a dependency)
+
 ## Dependencies
 
 You will need Graphviz installed as an application - installation instructions can be found at https://graphviz.org/download/
