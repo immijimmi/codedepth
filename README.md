@@ -1,6 +1,6 @@
 # codedepth
 
-###### Generates scores for how many layers of local imports/exports are in a file
+###### Generates and graphs how many levels of imports are needed for each file in a directory
 
 ##### Supported Languages
 - Python 🟢
