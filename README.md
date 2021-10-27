@@ -1,6 +1,6 @@
 # codedepth
 
-###### Generates and graphs how many levels of imports are needed for each file in a directory
+###### Generates and graphs how many levels of imports are needed for each file in a project
 
 ##### Supported Languages
 - Python 🟢
