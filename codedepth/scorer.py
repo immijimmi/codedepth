@@ -12,7 +12,7 @@ from warnings import warn
 from .parsers import *
 from .colourpickers import *
 from .constants import Errors, Constants
-from .config import Config
+from .config import DefaultConfig
 
 
 @contextmanager
@@ -32,8 +32,11 @@ class Scorer:
             custom_labeller: Optional[Callable[["Scorer", str], Optional[str]]] = None,
             custom_parsers: Iterable[Type[Parser]] = (),
             custom_filters: Iterable[Callable[[str], bool]] = (),
-            use_default_filters: bool = False
+            use_default_filters: bool = False,
+            config=DefaultConfig
     ):
+        self._config = config
+
         self._dir_path = path.abspath(dir_path)
         # Filtered files do not increment the score of any dependency trees they are in, and are excluded from output
         self._filters = set(custom_filters)
@@ -61,6 +64,10 @@ class Scorer:
         self._parse_stack = set()
 
         setrecursionlimit(10000)
+
+    @property
+    def config(self):
+        return self._config
 
     @property
     def dir_path(self) -> str:
@@ -281,7 +288,7 @@ class Scorer:
             node_colour, node_border_colour = self._colour_picker.get(parent)
             subgraph.node(
                 parent_node_id, self.get_label(parent),
-                color=node_border_colour, style="filled", fillcolor=node_colour, **Config.ranked_styles["node"]
+                color=node_border_colour, style="filled", fillcolor=node_colour, **self._config.ranked_styles["node"]
             )
 
         for parent_index, parent in enumerate(connections_working):
@@ -292,7 +299,7 @@ class Scorer:
                 child_node_id = node_ids[child]
 
                 edge_colour = self._colour_picker.get(child)[1]
-                graph.edge(child_node_id, parent_node_id, color=edge_colour, **Config.ranked_styles["edge"])
+                graph.edge(child_node_id, parent_node_id, color=edge_colour, **self._config.ranked_styles["edge"])
 
         for subgraph in subgraphs.values():
             graph.subgraph(subgraph)
