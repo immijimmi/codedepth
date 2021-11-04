@@ -9,7 +9,7 @@
 
 ## Dependencies
 
-You will need Graphviz installed as an application - installation instructions can be found at https://graphviz.org/download/
+You will need Graphviz v2.48.0 installed as an application - installation instructions can be found at https://graphviz.org/download/
 
 ## Quickstart
 
