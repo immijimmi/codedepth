@@ -8,7 +8,7 @@ setup(
     packages=[
         "codedepth", "codedepth.parsers", "codedepth.colourpickers"
     ],
-    version="0.2.2",
+    version="0.2.3",
     license="MIT",
     description="Generates scores for how many layers of local imports/exports are in a file",
     long_description_content_type="text/markdown",
@@ -16,7 +16,7 @@ setup(
     author="immijimmi",
     author_email="imranhamid99@msn.com",
     url="https://github.com/immijimmi/codedepth",
-    download_url="https://github.com/immijimmi/codedepth/archive/refs/tags/v0.2.2.tar.gz",
+    download_url="https://github.com/immijimmi/codedepth/archive/refs/tags/v0.2.3.tar.gz",
     keywords=[
         "abstraction", "level", "directory", "abstract", "imports", "import"
     ],
