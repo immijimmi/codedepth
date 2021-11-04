@@ -27,13 +27,10 @@ def set_value(target_set, value):
 
 class Scorer:
     def __init__(
-            self, dir_path: str,
-            colour_picker: Type[ColourPicker] = LayerScoreColourPicker,
+            self, dir_path: str, config=DefaultConfig,
             custom_labeller: Optional[Callable[["Scorer", str], Optional[str]]] = None,
             custom_parsers: Iterable[Type[Parser]] = (),
-            custom_filters: Iterable[Callable[[str], bool]] = (),
-            use_default_filters: bool = False,
-            config=DefaultConfig
+            custom_filters: Iterable[Callable[[str], bool]] = ()
     ):
         self._config = config
 
@@ -46,12 +43,12 @@ class Scorer:
         for parser_cls in custom_parsers:
             self._parsers.add(parser_cls)
 
-        if use_default_filters:
+        if self._config.USE_DEFAULT_FILTERS:
             for parser_cls in self._parsers:
                 for func in parser_cls.FILTERS:
                     self._filters.add(func)
 
-        self._colour_picker = colour_picker(self)
+        self._colour_picker = self._config.COLOUR_PICKER_CLS(self)
 
         # Layer score indicates how many layers of imports a file relies on
         self._layer_scores = {}
