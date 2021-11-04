@@ -4,10 +4,10 @@ from ..constants import Constants as MainConstants
 
 
 class Patterns:
-    require = {
+    REQUIRE = {
         compile(r"require[ \t]*\(\s*(\"|\')((.|\s)*?)\1\s*\)"): 1  # `require('module')`
     }
 
 
 class Constants:
-    node_modules_fragment = MainConstants.path_delimiter + "node_modules" + MainConstants.path_delimiter
+    NODE_MODULES_FRAGMENT = MainConstants.PATH_DELIMITER + "node_modules" + MainConstants.PATH_DELIMITER

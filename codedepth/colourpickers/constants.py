@@ -1,5 +1,5 @@
 class Constants:
-    colours = {
+    COLOURS = {
         "pastel": {  # Created as (20% saturation, 60% value) for each colour
             "red": ("#FFCCCC", "#990000"),
             "orange": ("#FFE0CC", "#993D00"),

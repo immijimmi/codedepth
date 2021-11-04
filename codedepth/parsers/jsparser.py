@@ -8,11 +8,11 @@ from ..constants import Constants
 
 
 class JsParser(RegexParser):
-    filters = frozenset((
+    FILTERS = frozenset((
         # TODO
     ))
 
-    _node_endings = (
+    NODE_ENDINGS = (
         ".js",
         ".jsx",
         ".ts",
@@ -20,8 +20,8 @@ class JsParser(RegexParser):
         ""
     )  # TODO: Possibly missing entries, and need to determine correct ordering to match JS's
 
-    _patterns = {
-        **Patterns.require,
+    PATTERNS = {
+        **Patterns.REQUIRE,
         compile(r"import [\w\{\}\s,]*? from (\"|\')((.|\s)*?)\1"): 1,  # `import _ from 'module'`
         compile(r"import (\"|\')((.|\s)*?)\1"): 1,  # `import 'module'`
     }  # TODO: Add all styles of import
@@ -29,7 +29,7 @@ class JsParser(RegexParser):
     @classmethod
     def can_parse(cls, file_path: str) -> bool:
         result = file_path[-3:] in (".js", ".ts") or file_path[-4:] in (".jsx", ".tsx")
-        result = result and (ParserConstants.node_modules_fragment not in file_path)
+        result = result and (ParserConstants.NODE_MODULES_FRAGMENT not in file_path)
         return result
 
     @classmethod
@@ -46,7 +46,7 @@ class JsParser(RegexParser):
                         directory_offset_total += 1
 
                     relative_chars += char
-                elif char in (Constants.path_delimiter, Constants.non_path_delimiter):
+                elif char in (Constants.PATH_DELIMITER, Constants.NON_PATH_DELIMITER):
                     relative_chars += char
                 else:
                     break

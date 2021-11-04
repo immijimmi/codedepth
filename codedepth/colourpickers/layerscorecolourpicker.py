@@ -5,17 +5,17 @@ from .constants import Constants
 
 
 class LayerScoreColourPicker(ColourPicker):
-    _colour_scale = ("blue", "green", "yellow", "orange", "red", "purple")
+    COLOUR_SCALE = ("blue", "green", "yellow", "orange", "red", "purple")
 
     def __init__(self, scorer: "Scorer"):
         super().__init__(scorer)
 
-        self._colours = {**Constants.colours["pastel"], **Constants.colours["greyscale"]}
+        self._colours = {**Constants.COLOURS["pastel"], **Constants.COLOURS["greyscale"]}
         self._history = {}
 
         self._parser_filters = set()
         for parser in self._scorer.parsers:
-            for func in parser.filters:
+            for func in parser.FILTERS:
                 self._parser_filters.add(func)
 
     def get(self, file_path: str) -> Tuple[str, str]:
@@ -27,8 +27,8 @@ class LayerScoreColourPicker(ColourPicker):
                 file_layer_score = self._scorer.layer_scores[file_path]
                 max_score = max(self._scorer.layer_scores.values())
                 score_percentile = 0 if max_score == 0 else (file_layer_score / max_score)
-                colour_index = round(score_percentile * (len(self._colour_scale)-1))
+                colour_index = round(score_percentile * (len(self.COLOUR_SCALE) - 1))
 
-                self._history[file_path] = self._colour_scale[colour_index]
+                self._history[file_path] = self.COLOUR_SCALE[colour_index]
 
         return self._colours[self._history[file_path]]

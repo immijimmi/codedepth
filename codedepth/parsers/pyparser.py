@@ -6,14 +6,14 @@ from .parser import Parser
 
 
 class PyParser(Parser):
-    filters = frozenset((
+    FILTERS = frozenset((
         lambda file_path: file_path[-12:] != r"\__init__.py",
         lambda file_path: file_path[-13:] != r"\constants.py",
         lambda file_path: file_path[-10:] != r"\config.py",
         lambda file_path: file_path[-12:] != r"\__main__.py"
     ))
 
-    _node_endings = (
+    NODE_ENDINGS = (
         r"\__init__.py",
         ".py",
         ".pyw"

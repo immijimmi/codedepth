@@ -9,7 +9,7 @@ class RandomColourPicker(ColourPicker):
     def __init__(self, scorer: "Scorer"):
         super().__init__(scorer)
 
-        self._colours = Constants.colours["pastel"]
+        self._colours = Constants.COLOURS["pastel"]
         self._history = {}
 
     def get(self, file_path: str) -> Tuple[str, str]:

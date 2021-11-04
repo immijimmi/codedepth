@@ -16,5 +16,5 @@ class Constants:
     elif ("\\" not in __cwd) and ("/" not in __cwd):
         raise NotImplementedError("unable to detect whether paths will contain forward or back slashes")
     else:
-        path_delimiter = "\\" if "\\" in __cwd else "/"
-        non_path_delimiter = "/" if "\\" in __cwd else "\\"
+        PATH_DELIMITER = "\\" if "\\" in __cwd else "/"
+        NON_PATH_DELIMITER = "/" if "\\" in __cwd else "\\"

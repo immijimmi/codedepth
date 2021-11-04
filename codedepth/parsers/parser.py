@@ -7,11 +7,11 @@ from ..constants import Constants
 
 class Parser(ABC):
     @property
-    def filters(self) -> FrozenSet[Callable[[str], bool]]:
+    def FILTERS(self) -> FrozenSet[Callable[[str], bool]]:  # Abstract class constant
         raise NotImplementedError
 
     @property
-    def _node_endings(self) -> Tuple[str]:
+    def NODE_ENDINGS(self) -> Tuple[str]:  # Abstract class constant
         raise NotImplementedError
 
     @classmethod
@@ -30,10 +30,10 @@ class Parser(ABC):
 
     @classmethod
     def _get_import_target(cls, import_node_starting_dir: str, import_node: str) -> Optional[str]:
-        working_target = import_node_starting_dir + Constants.path_delimiter
-        working_target += import_node.replace(".", Constants.path_delimiter).replace(Constants.non_path_delimiter, Constants.path_delimiter)
+        working_target = import_node_starting_dir + Constants.PATH_DELIMITER
+        working_target += import_node.replace(".", Constants.PATH_DELIMITER).replace(Constants.NON_PATH_DELIMITER, Constants.PATH_DELIMITER)
 
-        for path_ending in cls._node_endings:
+        for path_ending in cls.NODE_ENDINGS:
             result = working_target + path_ending
             if ospath.isfile(result):
                 return result

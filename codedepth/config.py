@@ -1,5 +1,5 @@
 class DefaultConfig:
-    ranked_styles = {
+    RANKED_STYLES = {
         "node": {
             "fontname": "helvetica",
         },

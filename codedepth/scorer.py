@@ -48,7 +48,7 @@ class Scorer:
 
         if use_default_filters:
             for parser_cls in self._parsers:
-                for func in parser_cls.filters:
+                for func in parser_cls.FILTERS:
                     self._filters.add(func)
 
         self._colour_picker = colour_picker(self)
@@ -288,7 +288,7 @@ class Scorer:
             node_colour, node_border_colour = self._colour_picker.get(parent)
             subgraph.node(
                 parent_node_id, self.get_label(parent),
-                color=node_border_colour, style="filled", fillcolor=node_colour, **self._config.ranked_styles["node"]
+                color=node_border_colour, style="filled", fillcolor=node_colour, **self._config.RANKED_STYLES["node"]
             )
 
         for parent_index, parent in enumerate(connections_working):
@@ -299,7 +299,7 @@ class Scorer:
                 child_node_id = node_ids[child]
 
                 edge_colour = self._colour_picker.get(child)[1]
-                graph.edge(child_node_id, parent_node_id, color=edge_colour, **self._config.ranked_styles["edge"])
+                graph.edge(child_node_id, parent_node_id, color=edge_colour, **self._config.RANKED_STYLES["edge"])
 
         for subgraph in subgraphs.values():
             graph.subgraph(subgraph)
@@ -313,8 +313,8 @@ class Scorer:
 
         label_delimiter = "▼\n"
         if (result := self._custom_labeller(self, file_path)) is None:
-            result = file_path.replace(self._dir_path + Constants.path_delimiter, "")
-            result = result.replace(Constants.path_delimiter, label_delimiter)
+            result = file_path.replace(self._dir_path + Constants.PATH_DELIMITER, "")
+            result = result.replace(Constants.PATH_DELIMITER, label_delimiter)
 
         if scorebar_length > 0:  # 0 or less will not generate a scorebar at all
             file_layer = self._layer_scores[file_path]
