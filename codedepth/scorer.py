@@ -128,9 +128,9 @@ class Scorer:
         return self._filtered_connections(self._exports)
 
     def parse_all(self) -> Dict[str, int]:
-        for _path, subdirs, files in walk(self._dir_path):
+        for file_location_path, subdirs, files in walk(self._dir_path):
             for name in files:
-                file_path = path.join(_path, name)
+                file_path = path.join(file_location_path, name)
                 try:
                     self.parse(file_path)
                 except Errors.ExternalFileError:
@@ -150,7 +150,7 @@ class Scorer:
             return self._layer_scores[file_path]
 
         # Looking for a parser that can parse this file
-        valid_parsers = list(filter(lambda _parser: _parser.can_parse(file_path), self._parsers))
+        valid_parsers = list(filter(lambda parser_to_check: parser_to_check.can_parse(file_path), self._parsers))
         if not valid_parsers:
             raise Errors.NoValidParserError("unable to parse provided file")
         parser_cls = valid_parsers[0]
