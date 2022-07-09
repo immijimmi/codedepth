@@ -1,7 +1,7 @@
 from .colourpickers import *
 
 
-class DefaultConfig:
+class Config:
     USE_DEFAULT_FILTERS = False
 
     COLOUR_PICKER_CLS = LayerScoreColourPicker

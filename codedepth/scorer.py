@@ -12,7 +12,7 @@ from warnings import warn
 from .parsers import *
 from .colourpickers import *
 from .constants import Errors, Constants
-from .config import DefaultConfig
+from .config import Config
 
 
 @contextmanager
@@ -27,7 +27,7 @@ def set_value(target_set, value):
 
 class Scorer:
     def __init__(
-            self, dir_path: str, config=DefaultConfig,
+            self, dir_path: str, config=Config,
             custom_labeller: Optional[Callable[["Scorer", str], Optional[str]]] = None,
             custom_parsers: Iterable[Type[Parser]] = (),
             custom_filters: Iterable[Callable[[str], bool]] = ()
