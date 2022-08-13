@@ -11,7 +11,7 @@ class Parser(ABC):
         raise NotImplementedError
 
     @property
-    def NODE_ENDINGS(self) -> Tuple[str]:  # Abstract class constant
+    def NODE_ENDINGS(self) -> Tuple[str, ...]:  # Abstract class constant
         raise NotImplementedError
 
     @classmethod

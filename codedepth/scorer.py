@@ -5,7 +5,7 @@ from matplotlib import pyplot
 from os import path, walk
 from sys import setrecursionlimit
 from string import ascii_uppercase
-from typing import Iterable, Callable, Dict, Set, Sequence, FrozenSet, Type, Optional
+from typing import Iterable, Callable, Dict, Set, Tuple, FrozenSet, Type, Optional
 from contextlib import contextmanager
 from warnings import warn
 
@@ -303,7 +303,7 @@ class Scorer:
 
         graph.view()
 
-    def get_label(self, file_path: str, scorebar_chars: Sequence[str] = ("■", "□"), scorebar_length: int = 10) -> str:
+    def get_label(self, file_path: str, scorebar_chars: Tuple[str, str] = ("■", "□"), scorebar_length: int = 10) -> str:
         """
         Provides a concrete implementation for prettifying a file path into a label
         """
