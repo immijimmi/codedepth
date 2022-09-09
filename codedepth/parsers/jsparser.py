@@ -2,9 +2,9 @@ from typing import Generator
 from re import compile
 from os import path as ospath
 
+from ..constants import Constants as ScorerConstants
 from .regexparser import RegexParser
-from .constants import Patterns, Constants as ParserConstants
-from ..constants import Constants
+from .constants import Patterns, Constants
 
 
 class JsParser(RegexParser):
@@ -29,7 +29,7 @@ class JsParser(RegexParser):
     @classmethod
     def can_parse(cls, file_path: str) -> bool:
         result = file_path[-3:] in (".js", ".ts") or file_path[-4:] in (".jsx", ".tsx")
-        result = result and (ParserConstants.NODE_MODULES_FRAGMENT not in file_path)
+        result = result and (Constants.NODE_MODULES_FRAGMENT not in file_path)
         return result
 
     @classmethod
@@ -46,7 +46,7 @@ class JsParser(RegexParser):
                         directory_offset_total += 1
 
                     relative_chars += char
-                elif char in (Constants.PATH_DELIMITER, Constants.NON_PATH_DELIMITER):
+                elif char in (ScorerConstants.PATH_DELIMITER, ScorerConstants.NON_PATH_DELIMITER):
                     relative_chars += char
                 else:
                     break

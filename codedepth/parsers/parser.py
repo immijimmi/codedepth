@@ -2,7 +2,7 @@ from abc import ABC
 from os import path as ospath
 from typing import Tuple, Callable, Generator, FrozenSet, Optional
 
-from ..constants import Constants
+from ..constants import Constants as ScorerConstants
 
 
 class Parser(ABC):
@@ -30,8 +30,12 @@ class Parser(ABC):
 
     @classmethod
     def _get_import_target(cls, import_node_starting_dir: str, import_node: str) -> Optional[str]:
-        working_target = import_node_starting_dir + Constants.PATH_DELIMITER
-        working_target += import_node.replace(".", Constants.PATH_DELIMITER).replace(Constants.NON_PATH_DELIMITER, Constants.PATH_DELIMITER)
+        working_target = import_node_starting_dir + ScorerConstants.PATH_DELIMITER
+        working_target += import_node.replace(
+            ".", ScorerConstants.PATH_DELIMITER
+        ).replace(
+            ScorerConstants.NON_PATH_DELIMITER, ScorerConstants.PATH_DELIMITER
+        )
 
         for path_ending in cls.NODE_ENDINGS:
             result = working_target + path_ending

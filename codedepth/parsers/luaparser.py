@@ -1,4 +1,3 @@
-from re import compile
 from typing import Generator
 
 from .regexparser import RegexParser
