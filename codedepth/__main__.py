@@ -35,5 +35,3 @@ with performance_timer():
 
     info("[2/3] Plotting ranked digraph...")
     s.plot_ranked()
-
-raise SystemExit
