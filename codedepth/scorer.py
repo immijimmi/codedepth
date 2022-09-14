@@ -21,8 +21,10 @@ def set_value(target_set, value):
         raise ValueError("value already exists in set")
 
     target_set.add(value)
-    yield
-    target_set.remove(value)
+    try:
+        yield
+    finally:
+        target_set.remove(value)
 
 
 class Scorer:
