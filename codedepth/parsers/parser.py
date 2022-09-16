@@ -3,15 +3,16 @@ from os import path as ospath
 from typing import Tuple, Callable, Generator, FrozenSet, Optional
 
 from ..constants import Constants as ScorerConstants
+from .methods import Decorators
 
 
 class Parser(ABC):
-    @property
-    def FILTERS(self) -> FrozenSet[Callable[[str], bool]]:  # Abstract class constant
+    @Decorators.classproperty
+    def FILTERS(cls) -> FrozenSet[Callable[[str], bool]]:
         raise NotImplementedError
 
-    @property
-    def NODE_ENDINGS(self) -> Tuple[str, ...]:  # Abstract class constant
+    @Decorators.classproperty
+    def NODE_ENDINGS(cls) -> Tuple[str, ...]:
         raise NotImplementedError
 
     @classmethod

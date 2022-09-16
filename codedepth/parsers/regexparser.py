@@ -3,11 +3,12 @@ from typing import Generator, Dict
 from re import Pattern
 
 from .parser import Parser
+from .methods import Decorators
 
 
 class RegexParser(Parser, ABC):
-    @property
-    def PATTERNS(self) -> Dict[Pattern, int]:  # Abstract class constant
+    @Decorators.classproperty
+    def PATTERNS(cls) -> Dict[Pattern, int]:
         raise NotImplementedError
 
     @classmethod
