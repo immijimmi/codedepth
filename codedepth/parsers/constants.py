@@ -1,6 +1,5 @@
 from re import compile
-
-from ..constants import Constants as ScorerConstants
+from os import sep
 
 
 class Patterns:
@@ -10,4 +9,4 @@ class Patterns:
 
 
 class Constants:
-    NODE_MODULES_FRAGMENT = ScorerConstants.PATH_DELIMITER + "node_modules" + ScorerConstants.PATH_DELIMITER
+    NODE_MODULES_FRAGMENT = sep + "node_modules" + sep

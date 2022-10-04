@@ -2,7 +2,7 @@ from networkx import DiGraph, draw_shell as draw
 from graphviz import Digraph
 from matplotlib import pyplot
 
-from os import path, walk
+from os import path, walk, sep
 from sys import setrecursionlimit
 from string import ascii_uppercase
 from typing import Iterable, Callable, Dict, Set, Tuple, FrozenSet, Type, Optional
@@ -11,7 +11,7 @@ from warnings import warn
 
 from .parsers import *
 from .colourpickers import *
-from .constants import Errors, Constants
+from .constants import Errors
 from .config import Config
 
 
@@ -312,8 +312,8 @@ class Scorer:
 
         label_delimiter = "▼\n"
         if (result := self._custom_labeller(self, file_path)) is None:
-            result = file_path.replace(self._dir_path + Constants.PATH_DELIMITER, "")
-            result = result.replace(Constants.PATH_DELIMITER, label_delimiter)
+            result = file_path.replace(self._dir_path + sep, "")
+            result = result.replace(sep, label_delimiter)
 
         if scorebar_length > 0:  # 0 or less will not generate a scorebar at all
             file_layer = self._layer_scores[file_path]

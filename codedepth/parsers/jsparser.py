@@ -2,7 +2,6 @@ from typing import Generator
 from re import compile
 from os import path as ospath
 
-from ..constants import Constants as ScorerConstants
 from .regexparser import RegexParser
 from .constants import Patterns, Constants
 
@@ -46,7 +45,7 @@ class JsParser(RegexParser):
                         directory_offset_total += 1
 
                     relative_chars += char
-                elif char in (ScorerConstants.PATH_DELIMITER, ScorerConstants.NON_PATH_DELIMITER):
+                elif char in ("\\", "/"):
                     relative_chars += char
                 else:
                     break
