@@ -34,7 +34,7 @@ class Parser(ABC):
         working_target += import_node.replace(
             ".", sep
         ).replace(
-            non_sep := {"\\": "/", "/": "\\"}[sep], sep
+            (non_sep := {"\\": "/", "/": "\\"}[sep]), sep
         )
 
         for path_ending in cls.NODE_ENDINGS:
