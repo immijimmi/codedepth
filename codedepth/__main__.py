@@ -4,7 +4,7 @@ from logging import basicConfig, info, INFO
 from datetime import datetime
 from contextlib import contextmanager
 
-from .__init__ import *
+from .__init__ import Scorer
 
 
 @contextmanager

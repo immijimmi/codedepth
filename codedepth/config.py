@@ -1,4 +1,4 @@
-from .colourpickers import *
+from .colourpickers import LayerScoreColourPicker
 
 
 class Config:
