@@ -9,8 +9,7 @@ from typing import Iterable, Callable, Dict, Set, Tuple, FrozenSet, Type, Option
 from contextlib import contextmanager
 from warnings import warn
 
-from .parsers import *
-from .colourpickers import *
+from .parsers import Parser, PyParser, LuaParser, JsParser
 from .constants import Errors
 from .config import Config
 
