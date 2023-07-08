@@ -8,10 +8,11 @@ from .__init__ import Scorer
 
 
 @contextmanager
-def performance_timer():
+def performance_timer(on_finish: Callable[[datetime, datetime], None]):
     start_time = datetime.now()
     yield
-    info(f"[3/3] Completed in {str(datetime.now() - start_time)}.")
+    end_time = datetime.now()
+    on_finish(start_time, end_time)
 
 
 expected_args = 2  # [Entry point (provided by default), target directory]
@@ -26,12 +27,12 @@ if len(argv) != expected_args:
 
 basicConfig(level=INFO)
 
-with performance_timer():
+with performance_timer(lambda start, end: info(f"[3/3] Completed in {end - start}.")):
     info("[0/3] Initializing...")
-    s = Scorer(argv[1])
+    scorer = Scorer(argv[1])
 
     info("[1/3] Parsing files...")
-    s.parse_all()
+    scorer.parse_all()
 
     info("[2/3] Plotting ranked digraph...")
-    s.plot_ranked()
+    scorer.plot_ranked()
