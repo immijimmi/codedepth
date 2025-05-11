@@ -21,7 +21,7 @@ setup(
         "abstraction", "level", "directory", "abstract", "imports", "import"
     ],
     install_requires=[
-        "graphviz~=0.16", "networkx~=2.5", "matplotlib~=3.3.4"
+        "graphviz~=0.16", "networkx~=2.5"
     ],
     classifiers=[
         "Development Status :: 4 - Beta",

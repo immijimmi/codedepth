@@ -1,6 +1,5 @@
 from networkx import DiGraph, draw_shell as draw
 from graphviz import Digraph
-from matplotlib import pyplot
 
 from os import path, walk, sep
 from sys import setrecursionlimit
@@ -215,33 +214,6 @@ class Scorer:
 
     def is_valid_file(self, file_path: str) -> bool:
         return all(func(file_path) for func in self._filters)
-
-    def plot_circular(self, node_size: int = 12500, alpha: float = 0.35) -> None:
-        """
-        Plots a circular graph of dependencies using Matplotlib
-        (requires matplotlib package)
-        """
-
-        warn(
-            "this method is no longer supported and will be removed in a future update. "
-            "Please use plot_ranked() instead",
-            DeprecationWarning
-        )
-
-        connections = {}
-
-        # Prettify data labels
-        for parent, children in self.imports.items():
-            abbreviated_children = set()
-
-            for child in children:
-                abbreviated_children.add(self.get_label(child))
-
-            connections[self.get_label(parent)] = abbreviated_children
-
-        graph = DiGraph(connections).reverse()
-        draw(graph, with_labels=True, node_size=node_size, alpha=alpha, arrows=True)
-        pyplot.show()
 
     def plot_ranked(self, reversed_score_positioning: bool = True) -> None:
         """
